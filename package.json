@@ -1,0 +1,23 @@
+{
+  "name": "traffic-guard",
+  "version": "1.0.0",
+  "description": "IP-based traffic filtering with ProxyCheck.io, device detection, and bot blocking",
+  "main": "server.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production node server.js",
+    "dev": "cross-env NODE_ENV=development nodemon server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.4.0",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "mongoose": "^8.1.0",
+    "ua-parser-js": "^1.0.37"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}

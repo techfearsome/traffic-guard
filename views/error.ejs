@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Error</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, sans-serif;
+    background: #07080a; color: #e2e8f0;
+    min-height: 100vh; display: flex;
+    align-items: center; justify-content: center;
+  }
+  .error-card { text-align: center; padding: 40px; }
+  h1 { font-size: 48px; margin-bottom: 12px; opacity: 0.2; }
+  p { font-size: 14px; color: rgba(255,255,255,0.4); }
+  a { color: #8b5cf6; text-decoration: none; margin-top: 20px; display: inline-block; }
+</style>
+</head>
+<body>
+<div class="error-card">
+  <h1>⚠️</h1>
+  <p><%= message %></p>
+  <a href="/dashboard">← Back to Dashboard</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Android Secure — Transaction Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #060a08;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(16,185,129,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 20% 80%, rgba(5,150,105,0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 80% 60%, rgba(52,211,153,0.03) 0%, transparent 35%);
+    pointer-events: none;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .a-modal {
+    margin: 0 14px;
+    position: relative; z-index: 1;
+    padding: 60px 0 40px;
+    animation: slideIn 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .a-card {
+    background: rgba(16,185,129,0.03);
+    border-radius: 24px;
+    border: 1px solid rgba(16,185,129,0.15);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 50px rgba(16,185,129,0.06),
+      0 12px 40px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(16,185,129,0.08);
+  }
+  .a-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(16,185,129,0.6) 30%, rgba(52,211,153,0.4) 70%, transparent 95%);
+  }
+  .a-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 10%, rgba(16,185,129,0.15) 50%, transparent 90%);
+  }
+
+  /* Header */
+  .a-hdr {
+    padding: 22px 22px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .a-hdr-left { display: flex; align-items: center; gap: 12px; }
+
+  .a-logo {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(5,150,105,0.12));
+    border: 1px solid rgba(16,185,129,0.3);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .a-logo::after {
+    content: ''; position: absolute; inset: -2px; border-radius: 16px;
+    background: conic-gradient(from 0deg, transparent, rgba(16,185,129,0.15), transparent, rgba(16,185,129,0.1), transparent);
+    animation: logoSpin 6s linear infinite;
+    z-index: -1;
+  }
+  @keyframes logoSpin { to { transform: rotate(360deg); } }
+  .a-logo svg { width: 22px; height: 22px; }
+
+  .a-hdr h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 700; color: #d1fae5;
+    letter-spacing: -0.2px;
+  }
+  .a-hdr small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: rgba(16,185,129,0.5);
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+
+  .a-live {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 100px; padding: 6px 12px 6px 9px;
+  }
+  .a-live-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #10b981;
+    box-shadow: 0 0 10px rgba(16,185,129,0.7);
+    animation: aPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes aPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.8); } }
+  .a-live span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: #10b981; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.2px;
+  }
+
+  /* Body */
+  .a-body { padding: 20px 22px 0; }
+
+  .a-alert {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.15);
+    border-radius: 14px;
+    padding: 13px 14px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .a-alert-icon {
+    width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+    background: rgba(245,158,11,0.12);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .a-alert-icon .material-icons-round { font-size: 18px; color: #f59e0b; }
+  .a-alert p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; font-weight: 500;
+  }
+
+  .a-amt-block {
+    text-align: center;
+    padding: 30px 20px 24px;
+    background: linear-gradient(145deg, rgba(16,185,129,0.06), rgba(5,150,105,0.03));
+    border-radius: 20px;
+    border: 1px solid rgba(16,185,129,0.1);
+    margin-bottom: 16px;
+    position: relative; overflow: hidden;
+  }
+  .a-amt-block::after {
+    content: ''; position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
+    background: conic-gradient(from 0deg, transparent, rgba(16,185,129,0.02), transparent, rgba(52,211,153,0.015), transparent);
+    animation: aBlockSpin 10s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes aBlockSpin { to { transform: rotate(360deg); } }
+
+  .a-amt-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: rgba(16,185,129,0.6);
+    text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 10px;
+    position: relative; z-index: 1;
+  }
+  .a-amt-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 52px; font-weight: 800; letter-spacing: -2.5px;
+    background: linear-gradient(135deg, #d1fae5, #6ee7b7, #34d399, #10b981);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative; z-index: 1;
+    filter: drop-shadow(0 0 20px rgba(16,185,129,0.2));
+  }
+
+  .a-gpay {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05); border-radius: 10px;
+    padding: 7px 14px; margin-top: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative; z-index: 1;
+  }
+  .a-gpay svg { width: 20px; height: 20px; }
+  .a-gpay span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600;
+  }
+
+  .a-details { margin-bottom: 0; }
+  .a-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(16,185,129,0.06);
+  }
+  .a-row:last-child { border-bottom: none; }
+  .a-row-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .a-row-v {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px; color: rgba(255,255,255,0.88); font-weight: 500;
+  }
+
+  .a-question {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.95);
+    text-align: center; padding: 24px 16px 10px; letter-spacing: -0.3px;
+  }
+
+  /* Buttons */
+  .a-actions { padding: 14px 22px 26px; display: flex; flex-direction: column; gap: 10px; }
+
+  .a-btn {
+    width: 100%; padding: 16px; border: none; border-radius: 14px;
+    font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    letter-spacing: -0.1px; position: relative; overflow: hidden;
+  }
+  .a-btn:active { transform: scale(0.96); }
+  .a-btn .material-icons-round { font-size: 20px; }
+
+  .a-btn-yes {
+    background: linear-gradient(135deg, #059669, #10b981);
+    color: #fff;
+    box-shadow: 0 4px 24px rgba(16,185,129,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .a-btn-no {
+    background: rgba(239,68,68,0.1);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+
+  .a-footer {
+    text-align: center; padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: rgba(16,185,129,0.2);
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="a-modal">
+  <div class="a-card">
+    <div class="a-hdr">
+      <div class="a-hdr-left">
+        <div class="a-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+        </div>
+        <div>
+          <h3>Android Secure</h3>
+          <small>Transaction Guard</small>
+        </div>
+      </div>
+      <div class="a-live">
+        <div class="a-live-dot"></div>
+        <span>Live</span>
+      </div>
+    </div>
+
+    <div class="a-body">
+      <div class="a-alert">
+        <div class="a-alert-icon"><span class="material-icons-round">warning_amber</span></div>
+        <p>New payment detected on your account — please verify this transaction.</p>
+      </div>
+
+      <div class="a-amt-block">
+        <div class="a-amt-label">Amount Charged</div>
+        <div class="a-amt-value">$149.00</div>
+        <div class="a-gpay">
+          <svg viewBox="0 0 24 24"><path fill="rgba(52,211,153,0.7)" d="M12.24 10.285V14.4h6.806c-.275 1.765-2.056 5.174-6.806 5.174-4.095 0-7.439-3.389-7.439-7.574s3.345-7.574 7.439-7.574c2.33 0 3.891.989 4.785 1.849l3.254-3.138C18.189 1.186 15.479 0 12.24 0c-6.635 0-12 5.365-12 12s5.365 12 12 12c6.926 0 11.52-4.869 11.52-11.726 0-.788-.085-1.39-.189-1.989H12.24z"/></svg>
+          <span>Google Pay</span>
+        </div>
+      </div>
+
+      <div class="a-details">
+        <div class="a-row"><span class="a-row-l">Merchant</span><span class="a-row-v">Amazon.com</span></div>
+        <div class="a-row"><span class="a-row-l">Payment</span><span class="a-row-v">Google Pay</span></div>
+        <div class="a-row"><span class="a-row-l">Timestamp</span><span class="a-row-v">Feb 26, 2026 · 3:42 PM</span></div>
+        <div class="a-row"><span class="a-row-l">Location</span><span class="a-row-v">Seattle, WA</span></div>
+      </div>
+
+      <p class="a-question">Did you authorize this transaction?</p>
+    </div>
+
+    <div class="a-actions">
+      <button class="a-btn a-btn-yes" onclick="handleAction(this,'confirm')">
+        <span class="material-icons-round">check_circle</span> Yes, This Was Me
+      </button>
+      <button class="a-btn a-btn-no" onclick="handleAction(this,'deny')">
+        <span class="material-icons-round">block</span> No, I Didn't Do This
+      </button>
+    </div>
+  </div>
+  <p class="a-footer">Android Secure · Real-time protection</p>
+</div>
+
+<%- include('partials/support-modal') %>
+
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Traffic Guard — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: #07080a;
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(139,92,246,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 70% 80%, rgba(59,130,246,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .login-card {
+    width: 100%; max-width: 380px; padding: 0 20px;
+    position: relative; z-index: 1;
+  }
+
+  .logo-section {
+    text-align: center; margin-bottom: 36px;
+  }
+
+  .logo-icon {
+    width: 64px; height: 64px; border-radius: 18px;
+    background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.1));
+    border: 1px solid rgba(139,92,246,0.25);
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .logo-icon svg { width: 28px; height: 28px; }
+
+  .logo-section h1 {
+    font-size: 22px; font-weight: 700; color: #e2e8f0;
+    letter-spacing: -0.3px; margin-bottom: 6px;
+  }
+  .logo-section p {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(139,92,246,0.5);
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  .form-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px; padding: 28px 24px;
+    backdrop-filter: blur(20px);
+  }
+
+  .input-group { margin-bottom: 18px; }
+  .input-group label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: rgba(255,255,255,0.4); margin-bottom: 8px;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .input-group input {
+    width: 100%; padding: 14px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px; color: #e2e8f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; outline: none;
+    transition: all 0.25s;
+  }
+  .input-group input:focus {
+    border-color: rgba(139,92,246,0.5);
+    box-shadow: 0 0 20px rgba(139,92,246,0.1);
+    background: rgba(255,255,255,0.06);
+  }
+
+  .login-btn {
+    width: 100%; padding: 15px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #8b5cf6);
+    color: #fff; font-family: 'Outfit', sans-serif;
+    font-size: 15px; font-weight: 600; cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(139,92,246,0.3);
+  }
+  .login-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(139,92,246,0.4);
+  }
+  .login-btn:active { transform: scale(0.98); }
+
+  .error-msg {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 10px; padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 13px; color: #f87171;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="login-card">
+  <div class="logo-section">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+    </div>
+    <h1>Traffic Guard</h1>
+    <p>Dashboard Access</p>
+  </div>
+
+  <div class="form-card">
+    <% if (error) { %>
+      <div class="error-msg"><%= error %></div>
+    <% } %>
+
+    <form method="POST" action="/dashboard/login">
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Enter dashboard password" autofocus required>
+      </div>
+      <button type="submit" class="login-btn">Access Dashboard</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>iPhone Firewall — Transaction Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #050510;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(59,130,246,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 70%, rgba(37,99,235,0.04) 0%, transparent 40%),
+      radial-gradient(ellipse at 15% 50%, rgba(96,165,250,0.03) 0%, transparent 35%);
+    pointer-events: none;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(20px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .i-modal {
+    margin: 0 14px;
+    position: relative; z-index: 1;
+    padding: 60px 0 40px;
+    animation: slideIn 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .i-card {
+    background: rgba(59,130,246,0.03);
+    backdrop-filter: blur(40px) saturate(150%);
+    -webkit-backdrop-filter: blur(40px) saturate(150%);
+    border-radius: 24px;
+    border: 1px solid rgba(59,130,246,0.15);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 50px rgba(59,130,246,0.06),
+      0 12px 40px rgba(0,0,0,0.5),
+      inset 0 1px 0 rgba(59,130,246,0.08);
+  }
+  .i-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, rgba(59,130,246,0.6) 30%, rgba(96,165,250,0.4) 70%, transparent 95%);
+  }
+  .i-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 10%, rgba(59,130,246,0.15) 50%, transparent 90%);
+  }
+
+  /* Header */
+  .i-hdr {
+    padding: 22px 22px 0;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .i-hdr-left { display: flex; align-items: center; gap: 12px; }
+
+  .i-logo {
+    width: 46px; height: 46px; border-radius: 14px;
+    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(37,99,235,0.12));
+    border: 1px solid rgba(59,130,246,0.3);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .i-logo::after {
+    content: ''; position: absolute; inset: -2px; border-radius: 16px;
+    background: conic-gradient(from 0deg, transparent, rgba(59,130,246,0.15), transparent, rgba(96,165,250,0.1), transparent);
+    animation: logoSpin 6s linear infinite;
+    z-index: -1;
+  }
+  @keyframes logoSpin { to { transform: rotate(360deg); } }
+  .i-logo svg { width: 22px; height: 22px; }
+
+  .i-hdr h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px; font-weight: 700; color: #dbeafe;
+    letter-spacing: -0.2px;
+  }
+  .i-hdr small {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: rgba(59,130,246,0.5);
+    letter-spacing: 1.5px; text-transform: uppercase;
+  }
+
+  .i-shield-badge {
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2);
+    border-radius: 100px; padding: 6px 12px 6px 9px;
+  }
+  .i-shield-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #3b82f6;
+    box-shadow: 0 0 10px rgba(59,130,246,0.7);
+    animation: iPulse 1.8s ease-in-out infinite;
+  }
+  @keyframes iPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(0.8); } }
+  .i-shield-badge span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: #3b82f6; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.2px;
+  }
+
+  /* Body */
+  .i-body { padding: 20px 22px 0; }
+
+  .i-alert {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.15);
+    border-radius: 14px;
+    padding: 13px 14px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .i-alert-icon {
+    width: 32px; height: 32px; border-radius: 10px; flex-shrink: 0;
+    background: rgba(245,158,11,0.12);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .i-alert-icon svg { width: 16px; height: 16px; stroke: #f59e0b; }
+  .i-alert p {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13px; color: rgba(255,255,255,0.8); line-height: 1.4; font-weight: 500;
+  }
+
+  .i-amt-block {
+    text-align: center;
+    padding: 30px 20px 24px;
+    background: linear-gradient(145deg, rgba(59,130,246,0.06), rgba(37,99,235,0.03));
+    border-radius: 20px;
+    border: 1px solid rgba(59,130,246,0.1);
+    margin-bottom: 16px;
+    position: relative; overflow: hidden;
+  }
+  .i-amt-block::after {
+    content: ''; position: absolute; top: -60%; left: -60%; width: 220%; height: 220%;
+    background: conic-gradient(from 0deg, transparent, rgba(59,130,246,0.02), transparent, rgba(96,165,250,0.015), transparent);
+    animation: aBlockSpin 10s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes aBlockSpin { to { transform: rotate(360deg); } }
+
+  .i-amt-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; color: rgba(59,130,246,0.6);
+    text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 10px;
+    position: relative; z-index: 1;
+  }
+  .i-amt-value {
+    font-family: 'Outfit', sans-serif;
+    font-size: 52px; font-weight: 800; letter-spacing: -2.5px;
+    background: linear-gradient(135deg, #dbeafe, #93c5fd, #60a5fa, #3b82f6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative; z-index: 1;
+    filter: drop-shadow(0 0 20px rgba(59,130,246,0.2));
+  }
+
+  .i-apple-pay {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,0.05); border-radius: 10px;
+    padding: 7px 14px; margin-top: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    position: relative; z-index: 1;
+  }
+  .i-apple-pay svg { width: 18px; height: 18px; }
+  .i-apple-pay span {
+    font-family: 'Outfit', sans-serif;
+    font-size: 12px; color: rgba(255,255,255,0.6); font-weight: 600;
+  }
+
+  .i-details { margin-bottom: 0; }
+  .i-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid rgba(59,130,246,0.06);
+  }
+  .i-row:last-child { border-bottom: none; }
+  .i-row-l {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: rgba(255,255,255,0.3);
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .i-row-v {
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px; color: rgba(255,255,255,0.88); font-weight: 500;
+  }
+
+  .i-question {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px; font-weight: 700; color: rgba(255,255,255,0.95);
+    text-align: center; padding: 24px 16px 10px; letter-spacing: -0.3px;
+  }
+
+  /* Buttons */
+  .i-actions { padding: 14px 22px 26px; display: flex; flex-direction: column; gap: 10px; }
+
+  .i-btn {
+    width: 100%; padding: 16px; border: none; border-radius: 14px;
+    font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.25s cubic-bezier(0.4,0,0.2,1);
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    letter-spacing: -0.1px; position: relative; overflow: hidden;
+  }
+  .i-btn:active { transform: scale(0.96); }
+  .i-btn svg { width: 18px; height: 18px; }
+
+  .i-btn-yes {
+    background: linear-gradient(135deg, #2563eb, #3b82f6);
+    color: #fff;
+    box-shadow: 0 4px 24px rgba(59,130,246,0.3), inset 0 1px 0 rgba(255,255,255,0.12);
+  }
+  .i-btn-no {
+    background: rgba(239,68,68,0.1);
+    color: #f87171;
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+
+  .i-footer {
+    text-align: center; padding: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; color: rgba(59,130,246,0.2);
+    text-transform: uppercase; letter-spacing: 2px;
+  }
+
+  .i-home-bar {
+    width: 134px; height: 5px;
+    background: rgba(59,130,246,0.15);
+    border-radius: 100px; margin: 12px auto 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="i-modal">
+  <div class="i-card">
+    <div class="i-hdr">
+      <div class="i-hdr-left">
+        <div class="i-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <circle cx="12" cy="16" r="1"/>
+          </svg>
+        </div>
+        <div>
+          <h3>iPhone Firewall</h3>
+          <small>Payment Shield</small>
+        </div>
+      </div>
+      <div class="i-shield-badge">
+        <div class="i-shield-dot"></div>
+        <span>Active</span>
+      </div>
+    </div>
+
+    <div class="i-body">
+      <div class="i-alert">
+        <div class="i-alert-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </div>
+        <p>Unverified payment detected — your immediate confirmation is required.</p>
+      </div>
+
+      <div class="i-amt-block">
+        <div class="i-amt-label">Amount Charged</div>
+        <div class="i-amt-value">$149.00</div>
+        <div class="i-apple-pay">
+          <svg viewBox="0 0 24 24" fill="rgba(147,197,253,0.8)"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <span>Apple Pay</span>
+        </div>
+      </div>
+
+      <div class="i-details">
+        <div class="i-row"><span class="i-row-l">Merchant</span><span class="i-row-v">Amazon.com</span></div>
+        <div class="i-row"><span class="i-row-l">Payment</span><span class="i-row-v">Apple Pay</span></div>
+        <div class="i-row"><span class="i-row-l">Timestamp</span><span class="i-row-v">Feb 26, 2026 · 3:42 PM</span></div>
+        <div class="i-row"><span class="i-row-l">Location</span><span class="i-row-v">Seattle, WA</span></div>
+      </div>
+
+      <p class="i-question">Did you authorize this transaction?</p>
+    </div>
+
+    <div class="i-actions">
+      <button class="i-btn i-btn-yes" onclick="handleAction(this,'confirm')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Yes, This Was Me
+      </button>
+      <button class="i-btn i-btn-no" onclick="handleAction(this,'deny')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+        No, I Didn't Do This
+      </button>
+    </div>
+  </div>
+  <p class="i-footer">iPhone Firewall · End-to-end encrypted</p>
+  <div class="i-home-bar"></div>
+</div>
+
+<%- include('partials/support-modal') %>
+
+</body>
+</html>
