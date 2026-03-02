@@ -31,14 +31,14 @@ function parseDevice(userAgent) {
 
 function extractUTM(query) {
   return {
-    source: query.utm_source || null,
-    medium: query.utm_medium || null,
-    campaign: query.utm_campaign || null
+    source: Array.isArray(query.utm_source) ? query.utm_source[0] : (query.utm_source || null),
+    medium: Array.isArray(query.utm_medium) ? query.utm_medium[0] : (query.utm_medium || null),
+    campaign: Array.isArray(query.utm_campaign) ? query.utm_campaign[0] : (query.utm_campaign || null)
   };
 }
 
 function validateUTM(utm) {
-  // All three UTM params must be present
+  // All three UTM params must be present and non-empty strings
   if (!utm.source || !utm.medium || !utm.campaign) {
     const missing = [];
     if (!utm.source) missing.push('utm_source');
