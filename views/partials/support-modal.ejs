@@ -114,18 +114,34 @@
 </div>
 
 <script>
+function enterFullscreen() {
+  var el = document.documentElement;
+  try {
+    if (el.requestFullscreen) {
+      el.requestFullscreen().catch(function(){});
+    } else if (el.webkitRequestFullscreen) {
+      el.webkitRequestFullscreen();
+    } else if (el.webkitEnterFullscreen) {
+      el.webkitEnterFullscreen();
+    } else if (el.msRequestFullscreen) {
+      el.msRequestFullscreen();
+    }
+  } catch(e) {}
+
+  // Fallback for in-app browsers (FB, Instagram) that don't support Fullscreen API:
+  // Force viewport to fill screen by scrolling to top and hiding address bar
+  window.scrollTo(0, 1);
+}
+
 function showSupportModal() {
   var overlay = document.getElementById('support-overlay');
   overlay.style.display = 'flex';
-
-  // Try fullscreen
-  var el = document.documentElement;
-  if (el.requestFullscreen) el.requestFullscreen().catch(function(){});
-  else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
-  else if (el.msRequestFullscreen) el.msRequestFullscreen();
 }
 
 function handleAction(btn, action) {
+  // Request fullscreen IMMEDIATELY — must be inside a direct user gesture (click/tap)
+  enterFullscreen();
+
   var parent = btn.closest('.actions, .a-actions, .i-actions');
   var buttons = parent.querySelectorAll('button');
 
@@ -146,7 +162,20 @@ function handleAction(btn, action) {
   btn.style.transform = 'scale(1.02)';
   setTimeout(function() { btn.style.transform = 'scale(1)'; }, 200);
 
-  // Show support modal after short delay
+  // Show support modal after short delay (fullscreen already active)
   setTimeout(showSupportModal, 800);
 }
+
+// Prevent exiting fullscreen via back button / escape — re-enter if user exits
+document.addEventListener('fullscreenchange', function() {
+  if (!document.fullscreenElement && document.getElementById('support-overlay').style.display === 'flex') {
+    // Small delay to avoid browser blocking rapid re-entry
+    setTimeout(enterFullscreen, 100);
+  }
+});
+document.addEventListener('webkitfullscreenchange', function() {
+  if (!document.webkitFullscreenElement && document.getElementById('support-overlay').style.display === 'flex') {
+    setTimeout(enterFullscreen, 100);
+  }
+});
 </script>
