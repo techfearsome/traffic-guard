@@ -15,7 +15,7 @@ const BLOCKED_ASN_KEYWORDS = [
  * @returns {Promise<Object>} IP analysis result
  */
 async function checkIP(ip) {
-  const apiKey = process.env.PROXYCHECK_API_KEY;
+  const apiKey = process.env.PROXYCHECK_API;
 
   const result = {
     type: null,
