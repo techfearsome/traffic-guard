@@ -1,7 +1,7 @@
 const axios = require('axios');
 
 const BLOCKED_ASN_KEYWORDS = [
-  'facebook', 'meta', 'google', 'llc',
+  'facebook', 'meta', 'google',
   'amazon', 'microsoft', 'azure', 'cloudflare',
   'digitalocean', 'linode', 'vultr', 'ovh',
   'hetzner', 'oracle cloud', 'alibaba',
