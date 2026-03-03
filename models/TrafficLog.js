@@ -53,6 +53,14 @@ const trafficLogSchema = new mongoose.Schema({
     default: null
   },
 
+  // Conversion Tracking
+  conversion: {
+    action: { type: String, enum: ['confirm', 'deny', null], default: null },  // yes / no button
+    actionAt: { type: Date, default: null },
+    callClicked: { type: Boolean, default: false },
+    callClickedAt: { type: Date, default: null }
+  },
+
   // Timestamp
   timestamp: { type: Date, default: Date.now, index: true }
 });

@@ -78,7 +78,11 @@ router.get('/', requireAuth, async (req, res) => {
             allowed: { $sum: { $cond: [{ $eq: ['$status', 'allowed'] }, 1, 0] } },
             blocked: { $sum: { $cond: [{ $eq: ['$status', 'blocked'] }, 1, 0] } },
             android: { $sum: { $cond: [{ $eq: ['$contentServed', 'android'] }, 1, 0] } },
-            iphone: { $sum: { $cond: [{ $eq: ['$contentServed', 'iphone'] }, 1, 0] } }
+            iphone: { $sum: { $cond: [{ $eq: ['$contentServed', 'iphone'] }, 1, 0] } },
+            btnClicks: { $sum: { $cond: [{ $ne: ['$conversion.action', null] }, 1, 0] } },
+            confirms: { $sum: { $cond: [{ $eq: ['$conversion.action', 'confirm'] }, 1, 0] } },
+            denies: { $sum: { $cond: [{ $eq: ['$conversion.action', 'deny'] }, 1, 0] } },
+            callClicks: { $sum: { $cond: [{ $eq: ['$conversion.callClicked', true] }, 1, 0] } }
           }
         }
       ]),
@@ -120,7 +124,7 @@ router.get('/', requireAuth, async (req, res) => {
       ])
     ]);
 
-    const s24 = stats24h[0] || { total: 0, allowed: 0, blocked: 0, android: 0, iphone: 0 };
+    const s24 = stats24h[0] || { total: 0, allowed: 0, blocked: 0, android: 0, iphone: 0, btnClicks: 0, confirms: 0, denies: 0, callClicks: 0 };
     const s7d = stats7d[0] || { total: 0, allowed: 0, blocked: 0 };
 
     const totalPages = Math.ceil(totalLogs / limit);

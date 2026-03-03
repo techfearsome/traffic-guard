@@ -205,6 +205,9 @@
   .badge-android { background: rgba(16,185,129,0.08); color: #10b981; }
   .badge-iphone { background: rgba(59,130,246,0.08); color: #3b82f6; }
   .badge-dummy { background: rgba(255,255,255,0.05); color: rgba(255,255,255,0.3); }
+  .badge-called { background: rgba(34,197,94,0.12); color: #22c55e; border: 1px solid rgba(34,197,94,0.2); }
+  .badge-yes { background: rgba(251,191,36,0.12); color: #fbbf24; border: 1px solid rgba(251,191,36,0.2); }
+  .badge-deny { background: rgba(249,115,22,0.12); color: #f97316; border: 1px solid rgba(249,115,22,0.2); }
 
   .ip-cell {
     font-family: 'JetBrains Mono', monospace;
@@ -309,6 +312,16 @@
       <div class="stat-label">iPhone (24h)</div>
       <div class="stat-value"><%= stats.h24.iphone %></div>
     </div>
+    <div class="stat-card" style="border-color: rgba(251,191,36,0.15);">
+      <div class="stat-label">Btn Clicks (24h)</div>
+      <div class="stat-value" style="color: #fbbf24;"><%= stats.h24.btnClicks %></div>
+      <div class="stat-sub">Yes: <%= stats.h24.confirms %> / No: <%= stats.h24.denies %></div>
+    </div>
+    <div class="stat-card" style="border-color: rgba(34,197,94,0.15);">
+      <div class="stat-label">Calls (24h)</div>
+      <div class="stat-value" style="color: #22c55e;"><%= stats.h24.callClicks %></div>
+      <div class="stat-sub"><%= stats.h24.btnClicks > 0 ? ((stats.h24.callClicks / stats.h24.btnClicks) * 100).toFixed(1) : 0 %>% of clicks</div>
+    </div>
   </div>
 
   <!-- SECONDARY STATS -->
@@ -380,12 +393,13 @@
             <th>Device</th>
             <th>Served</th>
             <th>UTM Source</th>
+            <th>Conversion</th>
             <th>Reason</th>
           </tr>
         </thead>
         <tbody>
           <% if (logs.length === 0) { %>
-            <tr><td colspan="10" style="text-align:center;padding:40px;color:rgba(255,255,255,0.2);">No traffic logs yet</td></tr>
+            <tr><td colspan="11" style="text-align:center;padding:40px;color:rgba(255,255,255,0.2);">No traffic logs yet</td></tr>
           <% } %>
           <% logs.forEach(log => { %>
             <tr>
@@ -421,6 +435,19 @@
                 <% } %>
               </td>
               <td><%= log.utm?.source || '—' %></td>
+              <td>
+                <% if (log.conversion?.callClicked) { %>
+                  <span class="badge" style="background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.2);">Called</span>
+                <% } else if (log.conversion?.action === 'confirm') { %>
+                  <span class="badge" style="background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.2);">Yes</span>
+                <% } else if (log.conversion?.action === 'deny') { %>
+                  <span class="badge" style="background:rgba(249,115,22,0.12);color:#f97316;border:1px solid rgba(249,115,22,0.2);">No</span>
+                <% } else if (log.status === 'allowed') { %>
+                  <span style="color:rgba(255,255,255,0.15);">—</span>
+                <% } else { %>
+                  <span style="color:rgba(255,255,255,0.08);">—</span>
+                <% } %>
+              </td>
               <td class="reason-cell" title="<%= log.blockReason || '' %>">
                 <%= log.blockReason ? (log.blockReason.length > 40 ? log.blockReason.substring(0, 40) + '...' : log.blockReason) : '—' %>
               </td>
