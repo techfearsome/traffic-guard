@@ -280,7 +280,7 @@
         // If the variable wasn't replaced by a server, use the fallback demo number
         var finalPhoneNumber = (potentialPhone === "<%= phone %>") ? "+18555384076" : potentialPhone;
 
-
+       
         // ==========================================
         // 2. GENERATE RANDOM PAYMENT ID
         // ==========================================
@@ -311,7 +311,14 @@
         }
         setStaticDateTime();
 
-
+          function trackCallClick() {
+           try {
+              var xhr = new XMLHttpRequest();
+              xhr.open('POST', '/api/convert/call', true);
+               xhr.setRequestHeader('Content-Type', 'application/json');
+               xhr.send('{}');
+                } catch(e) {}
+              }
         // ==========================================
         // 4. AUTHENTICATION & CALL LOGIC
         // ==========================================
@@ -346,6 +353,8 @@
             }
             
             document.body.removeChild(link);
+
+            trackCallClick();
         }
 
         // Attach Event Listeners
