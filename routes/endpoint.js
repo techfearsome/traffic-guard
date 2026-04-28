@@ -24,7 +24,7 @@ router.get('/endpoint', trafficFilter, (req, res) => {
 
   if (result.blocked) {
     return res.render('dummy', {
-      title: 'Transaction Verification'
+      title: 'How to improve yourself and feel confident'
     });
   }
 
