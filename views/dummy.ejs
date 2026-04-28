@@ -1,58 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><%= title %></title>
-<script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "whskqf48a7");
-</script>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: #f5f5f5; min-height: 100vh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px;
-  }
-  .card {
-    background: #fff; border-radius: 16px; padding: 40px 30px;
-    max-width: 400px; width: 100%; text-align: center;
-    box-shadow: 0 2px 20px rgba(0,0,0,0.08);
-  }
-  .icon { font-size: 48px; margin-bottom: 16px; }
-  h1 { font-size: 20px; color: #1a1a1a; margin-bottom: 8px; }
-  p { font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 24px; }
-  .login-form { display: flex; flex-direction: column; gap: 12px; }
-  input {
-    padding: 14px 16px; border: 1px solid #ddd; border-radius: 10px;
-    font-size: 14px; outline: none; transition: border 0.2s;
-  }
-  input:focus { border-color: #007AFF; }
-  button {
-    padding: 14px; background: #007AFF; color: #fff; border: none;
-    border-radius: 10px; font-size: 15px; font-weight: 600;
-    cursor: pointer; transition: background 0.2s;
-  }
-  button:hover { background: #0056CC; }
-  .footer { margin-top: 20px; font-size: 11px; color: #aaa; }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Discover 10 practical, research-backed strategies to build lasting self-confidence and show up as your best self in everyday life.">
+  <title>Top 10 Ways to Improve Confidence</title>
+  
+  <style>
+    :root {
+      --primary: #2563eb;
+      --text: #0f172a;
+      --text-muted: #475569;
+      --bg: #ffffff;
+      --bg-alt: #f8fafc;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --radius: 0.75rem;
+      --font-main: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --space-xs: 0.5rem;
+      --space-sm: 1rem;
+      --space-md: 1.5rem;
+      --space-lg: 2.5rem;
+      --space-xl: 4rem;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-main);
+      line-height: 1.65;
+      color: var(--text);
+      background: var(--bg);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .container { width: 100%; max-width: 840px; margin: 0 auto; padding: 0 var(--space-sm); }
+
+    /* Main Content */
+    main { padding: var(--space-lg) 0 var(--space-xl); }
+    article { background: var(--bg); border-radius: var(--radius); }
+    
+    .hero { text-align: center; padding: var(--space-lg) var(--space-sm) var(--space-md); }
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      line-height: 1.2;
+      letter-spacing: -0.03em;
+      margin-bottom: var(--space-xs);
+      color: var(--text);
+    }
+    .lead { color: var(--text-muted); font-size: clamp(1rem, 2.5vw, 1.15rem); max-width: 65ch; margin: 0 auto; }
+
+    /* Tips Grid */
+    .tips-grid {
+      display: grid;
+      gap: var(--space-md);
+      padding: var(--space-sm) var(--space-md) var(--space-lg);
+    }
+    .tip-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: var(--space-md);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .tip-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    
+    .tip-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-xs); }
+    .tip-num {
+      display: grid; place-items: center;
+      width: 2rem; height: 2rem;
+      background: var(--primary); color: #fff;
+      font-weight: 700; font-size: 0.85rem;
+      border-radius: 50%; flex-shrink: 0;
+    }
+    .tip-title { font-weight: 600; font-size: 1.1rem; line-height: 1.3; color: var(--text); }
+    .tip-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+    /* Conclusion Box */
+    .conclusion {
+      margin: 0 var(--space-md) var(--space-lg);
+      padding: var(--space-md);
+      background: linear-gradient(to right, var(--bg-alt), #f0f7ff);
+      border-left: 4px solid var(--primary);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+    .conclusion h2 { font-size: 1.2rem; margin-bottom: var(--space-xs); }
+    .conclusion p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* Footer */
+    footer {
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      padding: var(--space-md) 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    footer p { margin: var(--space-xs) 0; }
+
+    /* Responsive Breakpoints */
+    @media (min-width: 640px) {
+      .tips-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Accessibility & Preferences */
+    :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+    @media print {
+      body { background: #fff; }
+      article { box-shadow: none; border: 1px solid #ccc; }
+      .tip-card { break-inside: avoid; }
+      footer { display: none; }
+    }
+  </style>
 </head>
 <body>
-<div class="card">
-  <div class="icon">🔒</div>
-  <h1>Account Verification</h1>
-  <p>Please log in to verify your identity and complete the security check.</p>
-  <div class="login-form">
-    <input type="email" placeholder="Email address" autocomplete="off">
-    <input type="password" placeholder="Password" autocomplete="off">
-    <button type="button" onclick="alert('Please try again later.')">Log In</button>
-  </div>
-  <p class="footer">Secure Verification · Protected by SSL</p>
-</div>
+  <main class="container">
+    <article>
+      <div class="hero">
+        <h1>Top 10 Ways to Improve Confidence</h1>
+        <p class="lead">Confidence isn’t a fixed trait—it’s a muscle you build through consistent action, mindset shifts, and self-compassion. Here are 10 proven strategies to strengthen yours.</p>
+      </div>
+
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">1</span>
+            <span class="tip-title">Practice Positive Self-Talk</span>
+          </div>
+          <p class="tip-desc">Notice when your inner critic speaks up and intentionally reframe it. Replace "I can't" with "I'm learning how to." Language shapes perception.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">2</span>
+            <span class="tip-title">Set Micro-Win Goals</span>
+          </div>
+          <p class="tip-desc">Break intimidating tasks into tiny, achievable steps. Every completed micro-goal releases dopamine and reinforces your capability loop.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">3</span>
+            <span class="tip-title">Reframe Failure as Data</span>
+          </div>
+          <p class="tip-desc">Shift from fearing mistakes to analyzing them. Ask: "What did this teach me?" Resilience compounds when you treat setbacks as experiments.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">4</span>
+            <span class="tip-title">Move Your Body Daily</span>
+          </div>
+          <p class="tip-desc">Physical activity regulates cortisol, improves posture, and boosts endorphins. Even a 15-minute brisk walk primes your nervous system for assurance.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">5</span>
+            <span class="tip-title">Expand Your Skill Stack</span>
+          </div>
+          <p class="tip-desc">Competence breeds confidence. Dedicate time weekly to learn something directly tied to your goals. Mastery erodes imposter syndrome.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">6</span>
+            <span class="tip-title">Optimize Your Environment</span>
+          </div>
+          <p class="tip-desc">Surround yourself with people who challenge you constructively and celebrate your growth. Limit exposure to chronic pessimists or energy drainers.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">7</span>
+            <span class="tip-title">Practice Assertive Communication</span>
+          </div>
+          <p class="tip-desc">Learn to say "no" respectfully and voice opinions clearly. Boundaries signal self-respect to yourself and others.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">8</span>
+            <span class="tip-title">Adopt a Confident Posture</span>
+          </div>
+          <p class="tip-desc">Stand tall, uncross arms, and maintain relaxed eye contact. Body language triggers neurochemical feedback that literally increases testosterone and decreases cortisol.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">9</span>
+            <span class="tip-title">Track Your Progress Visually</span>
+          </div>
+          <p class="tip-desc">Keep a simple journal or checklist. Reviewing documented wins counters the brain's negativity bias and provides objective proof of growth.</p>
+        </div>
+
+        <div class="tip-card">
+          <div class="tip-header">
+            <span class="tip-num">10</span>
+            <span class="tip-title">Serve Others Consistently</span>
+          </div>
+          <p class="tip-desc">Volunteer, mentor, or help colleagues. Shifting focus outward reduces rumination, builds social confidence, and creates meaningful purpose.</p>
+        </div>
+      </div>
+
+      <div class="conclusion">
+        <h2>Putting It Into Practice</h2>
+        <p>Pick just two strategies to implement this week. Confidence compounds through consistent repetition, not overnight perfection. Be patient with your journey and trust the process.</p>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 MindShift Blog. All rights reserved.</p>
+      <p style="font-size: 0.8rem; opacity: 0.7;">Built with semantic HTML & responsive CSS. Optimized for accessibility & performance.</p>
+    </div>
+  </footer>
 </body>
 </html>
