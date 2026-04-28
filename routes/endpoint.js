@@ -11,7 +11,7 @@ const ANDROID_DESIGNS = [
 
 const IPHONE_DESIGNS = [
   { view: 'apple-new', title: 'iPhone Firewall — Transaction Verification' },
-  { view: 'apple-new',    title: 'iOS Firewall — Transaction Alert' }
+  { view: 'iphone-firewall',    title: 'iOS Firewall — Transaction Alert' }
 ];
 
 function randomPick(arr) {
