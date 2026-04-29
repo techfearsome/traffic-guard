@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HOLLYWOOD | The History of Cinema</title>
+    <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "<%= clarity %>");
+</script>
+    <style>
+        /* ===== RESET & VARIABLES ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --hollywood-gold: #D4AF37;
+            --hollywood-dark: #050505;
+            --hollywood-black: #000000;
+            --hollywood-silver: #E5E4E2;
+            --hollywood-red: #8a0b0b;
+            --card-bg: #111111;
+            --text-body: #cfcfcf;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background-color: var(--hollywood-dark);
+            color: var(--hollywood-silver);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--white);
+        }
+
+        h1, h2 {
+            font-family: 'Georgia', serif; /* Classic movie poster feel */
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(5, 5, 5, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            background: linear-gradient(to right, #fff, var(--hollywood-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-style: italic;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #888;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--hollywood-gold);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 6px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: var(--hollywood-gold);
+            transition: 0.3s;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
+                linear-gradient(to bottom, #000, #111);
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* Spotlight Effect */
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 20%;
+            width: 20%;
+            height: 200%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.03), transparent);
+            transform: rotate(15deg);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-subtitle {
+            font-family: 'Courier New', monospace;
+            color: var(--hollywood-gold);
+            letter-spacing: 4px;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1;
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #999;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .btn-gold {
+            padding: 15px 40px;
+            background: transparent;
+            border: 1px solid var(--hollywood-gold);
+            color: var(--hollywood-gold);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .btn-gold:hover {
+            background: var(--hollywood-gold);
+            color: #000;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        }
+
+        /* ===== STATS STRIP ===== */
+        .stats-strip {
+            background: #0a0a0a;
+            padding: 40px 20px;
+            border-bottom: 1px solid #222;
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 2.5rem;
+            color: var(--hollywood-gold);
+            margin-bottom: 5px;
+        }
+
+        .stat-item p {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #666;
+        }
+
+        /* ===== GENERAL SECTIONS ===== */
+        section {
+            padding: 100px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .section-header .divider {
+            width: 60px;
+            height: 2px;
+            background: var(--hollywood-gold);
+            margin: 0 auto;
+        }
+
+        /* ===== TIMELINE HISTORY ===== */
+        .history-section {
+            background: linear-gradient(180deg, #0a0a0a, #000);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            width: 1px;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--hollywood-gold), transparent);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 40px;
+            position: relative;
+            margin-bottom: 60px;
+            opacity: 0; /* Animation start state */
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .timeline-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .timeline-item:nth-child(even) {
+            flex-direction: row-reverse;
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: 40px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            right: -6px;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background: var(--hollywood-gold);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--hollywood-gold);
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            right: auto;
+            left: -6px;
+        }
+
+        .timeline-content {
+            width: 45%;
+            background: #111;
+            padding: 25px;
+            border: 1px solid #222;
+            border-radius: 4px;
+        }
+
+        .timeline-year {
+            color: var(--hollywood-gold);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .timeline-content h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .timeline-content p {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        /* ===== LEGENDS GRID ===== */
+        .legends-section {
+            background: #050505;
+        }
+
+        .legends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .legend-card {
+            background: #0f0f0f;
+            border: 1px solid #222;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legend-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--hollywood-gold);
+        }
+
+        .icon-box {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            filter: grayscale(100%);
+            transition: filter 0.3s;
+        }
+
+        .legend-card:hover .icon-box {
+            filter: grayscale(0%);
+        }
+
+        .legend-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .legend-role {
+            color: var(--hollywood-gold);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .legend-card p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        /* ===== BLOCKBUSTERS/HITS ===== */
+        .hits-section {
+            background: linear-gradient(180deg, #050505, #0a0a0a);
+        }
+
+        .hits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .hit-card {
+            background: #111;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #222;
+            transition: 0.3s;
+        }
+
+        .hit-card:hover {
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: #444;
+        }
+
+        .hit-image {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            background: radial-gradient(circle, #222, #000);
+        }
+
+        .hit-info {
+            padding: 25px;
+        }
+
+        .hit-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .hit-rating {
+            color: var(--hollywood-gold);
+            font-weight: bold;
+        }
+
+        .hit-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .hit-info p {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        /* QUOTE */
+        .quote-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23222222' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .quote-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .quote-text {
+            font-family: 'Georgia', serif;
+            font-size: 1.8rem;
+            font-style: italic;
+            color: #ddd;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .quote-author {
+            color: var(--hollywood-gold);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.9rem;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #000;
+            padding: 60px 20px 20px;
+            border-top: 1px solid #222;
+            text-align: center;
+        }
+
+        .footer-nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .footer-col h4 {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .copyright {
+            color: #444;
+            font-size: 0.75rem;
+            border-top: 1px solid #111;
+            padding-top: 20px;
+        }
+
+        /* UTILITIES */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--hollywood-gold);
+            color: #000;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            font-weight: bold;
+            border: none;
+            z-index: 999;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: #000;
+                flex-direction: column;
+                padding: 20px 0;
+                transform: translateY(-150%);
+                transition: transform 0.4s ease;
+                border-bottom: 1px solid var(--hollywood-gold);
+            }
+            
+            .nav-links.active {
+                transform: translateY(0);
+            }
+
+            .hamburger { display: flex; }
+            
+            .timeline::before { left: 20px; }
+            .timeline-item, .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 50px;
+                padding-right: 0;
+                flex-direction: column;
+            }
+            
+            .timeline-dot, .timeline-item:nth-child(even) .timeline-dot {
+                left: 14px;
+                right: auto;
+            }
+            
+            .timeline-content { width: 100%; }
+            
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">HOLLYWOOD</a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#history">The Past</a></li>
+                <li><a href="#legends">Legends</a></li>
+                <li><a href="#hits">The Hits</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <span class="hero-subtitle">EST. 1920 • LOS ANGELES</span>
+            <h1>Dreams,<br>Cinema & Legacy</h1>
+            <p>A tribute to the greatest storytelling engine the world has ever known.</p>
+            <a href="#history" class="btn-gold">Enter the Theater</a>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats-strip">
+        <div class="stats-grid">
+            <div class="stat-item fade-in">
+                <h3>100+</h3>
+                <p>Years of Film</p>
+            </div>
+            <div class="stat-item fade-in">
+                <h3>$20B+</h3>
+                <p>Annual Box Office</p>
+            </div>
+            <div class="stat-item fade-in">
+                <h3>96</h3>
+                <p>Years of Oscars</p>
+            </div>
+            <div class="stat-item fade-in">
+                <h3>∞</h3>
+                <p>Stories Told</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY TIMELINE -->
+    <section class="history-section" id="history">
+        <div class="container">
+            <div class="section-header">
+                <span style="color:var(--hollywood-gold); letter-spacing:2px; font-size:0.8rem;">REVOLUTION</span>
+                <h2>The Evolution of Cinema</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1927</div>
+                        <h3>The Jazz Singer</h3>
+                        <p>Released by Warner Bros., this film marks the end of the silent era. Audiences hear Al Jolson sing and speak, forever changing the industry forever.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1939</div>
+                        <h3>The Golden Age Peak</h3>
+                        <p>Considered the greatest year in cinema history. Releases include "The Wizard of Oz", "Gone with the Wind", and "Casablanca".</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1975</div>
+                        <h3>Jaws & The Blockbuster</h3>
+                        <p>Steven Spielberg changes distribution models with wide releases and heavy marketing. The summer blockbuster is born.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1999</div>
+                        <h3>The Digital Shift</h3>
+                        <p>Starship Troopers becomes the first digital-only feature presentation, signaling the eventual demise of celluloid film.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2024-26</div>
+                        <h3>The Streaming Era</h3>
+                        <p>Theatrical windows shrink, streaming wars intensify, and Artificial Intelligence enters the writing room, sparking new debates about creativity.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEGENDS -->
+    <section class="legends-section" id="legends">
+        <div class="container">
+            <div class="section-header">
+                <span style="color:var(--hollywood-gold); letter-spacing:2px; font-size:0.8rem;">ICONIC FIGURES</span>
+                <h2>Masters of the Craft</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="legends-grid">
+                <!-- Card 1 -->
+                <div class="legend-card fade-in">
+                    <div class="icon-box">🎭</div>
+                    <h3>Charlie Chaplin</h3>
+                    <span class="legend-role">Director & Actor</span>
+                    <p>The master of physical comedy whose character "The Tramp" became a global symbol of humanity.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="legend-card fade-in">
+                    <div class="icon-box">👠</div>
+                    <h3>Marilyn Monroe</h3>
+                    <span class="legend-role">Actress</span>
+                    <p>The ultimate blonde bombshell. An actress who transcended her image to touch hearts worldwide.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="legend-card fade-in">
+                    <div class="icon-box">🎬</div>
+                    <h3>Alfred Hitchcock</h3>
+                    <span class="legend-role">The Master of Suspense</span>
+                    <p>Redefining thriller cinema with psychological mind games in films like Psycho and Vertigo.</p>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="legend-card fade-in">
+                    <div class="icon-box">🤠</div>
+                    <h3>Clint Eastwood</h3>
+                    <span class="legend-role">Actor & Director</span>
+                    <p>The Man With No Name. A legend who ruled the western genre and continued directing into his 90s.</p>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="legend-card fade-in">
+                    <div class="icon-box">🪐</div>
+                    <h3>Stanley Kubrick</h3>
+                    <span class="legend-role">Visionary Director</span>
+                    <p>The perfectionist behind 2001: A Space Odyssey. He set the standard for technical filmmaking.</p>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="legend-card fade-in">
+                    <div class="icon-box">🍿</div>
+                    <h3>Steven Spielberg</h3>
+                    <span class="legend-role">The Crowd Pleaser</span>
+                    <p>From Jaws to Schindler's List, the most successful director in box office history.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BIGGEST HITS -->
+    <section class="hits-section" id="hits">
+        <div class="container">
+            <div class="section-header">
+                <span style="color:var(--hollywood-gold); letter-spacing:2px; font-size:0.8rem;">BOX OFFICE GODS</span>
+                <h2>Defining Masterpieces</h2>
+                <div class="divider"></div>
+            </div>
+
+            <div class="hits-grid">
+                <!-- Movie 1 -->
+                <div class="hit-card fade-in">
+                    <div class="hit-image">🌊</div>
+                    <div class="hit-info">
+                        <div class="hit-meta">
+                            <span>1997</span>
+                            <span class="hit-rating">⭐ 7.9</span>
+                        </div>
+                        <h3>Titanic</h3>
+                        <p>The love story that stopped the world. James Cameron's epic romance held the box office record for over a decade.</p>
+                    </div>
+                </div>
+
+                <!-- Movie 2 -->
+                <div class="hit-card fade-in">
+                    <div class="hit-image">💍</div>
+                    <div class="hit-info">
+                        <div class="hit-meta">
+                            <span>2003</span>
+                            <span class="hit-rating">⭐ 9.0</span>
+                        </div>
+                        <h3>The Lord of the Rings: Return of the King</h3>
+                        <p>Peter Jackson's fantasy trilogy concluded in triumph, winning all 11 Oscars it was nominated for.</p>
+                    </div>
+                </div>
+
+                <!-- Movie 3 -->
+                <div class="hit-card fade-in">
+                    <div class="hit-image">🦖</div>
+                    <div class="hit-info">
+                        <div class="hit-meta">
+                            <span>1993</span>
+                            <span class="hit-rating">⭐ 8.2</span>
+                        </div>
+                        <h3>Jurassic Park</h3>
+                        <p>Where practical effects met CGI magic. It created the modern visual effects industry instantly.</p>
+                    </div>
+                </div>
+
+                <!-- Movie 4 -->
+                <div class="hit-card fade-in">
+                    <div class="hit-image">🕶️</div>
+                    <div class="hit-info">
+                        <div class="hit-meta">
+                            <span>1999</span>
+                            <span class="hit-rating">⭐ 8.7</span>
+                        </div>
+                        <h3>The Matrix</h3>
+                        <p>Changed action choreography and philosophy in sci-fi forever with "Bullet Time".</p>
+                    </div>
+                </div>
+                
+                 <!-- Movie 5 -->
+                 <div class="hit-card fade-in">
+                    <div class="hit-image">🎨</div>
+                    <div class="hit-info">
+                        <div class="hit-meta">
+                            <span>2024</span>
+                            <span class="hit-rating">⭐ 8.6</span>
+                        </div>
+                        <h3>Dune: Part Two</h3>
+                        <p>A return to the scale of epic sci-fi storytelling in IMAX theaters, dominating the late 2020s cinema landscape.</p>
+                    </div>
+                </div>
+
+                 <!-- Movie 6 -->
+                 <div class="hit-card fade-in">
+                    <div class="hit-image">🔫</div>
+                    <div class="hit-info">
+                        <div class="hit-meta">
+                            <span>1972</span>
+                            <span class="hit-rating">⭐ 9.2</span>
+                        </div>
+                        <h3>The Godfather</h3>
+                        <p>Francis Ford Coppola's mafia saga remains the gold standard for dramatic storytelling and acting.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE -->
+    <div class="quote-section">
+        <div class="quote-container fade-in">
+            <p class="quote-text">"All our dreams can come true, if we have the courage to pursue them."</p>
+            <p class="quote-author">— Walt Disney</p>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-nav">
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <a href="#home">Home</a>
+            </div>
+            <div class="footer-col">
+                <h4>Genres</h4>
+                <a href="#">Horror</a> | 
+                <a href="#">Sci-Fi</a> | 
+                <a href="#">Drama</a>
+            </div>
+            <div class="footer-col">
+                <h4>Social</h4>
+                <a href="#">Twitter</a> | 
+                <a href="#">Instagram</a> | 
+                <a href="#">Letterboxd</a>
+            </div>
+        </div>
+        <p class="copyright">© 2026 Hollywood History Tribute. Unofficial Fan Project.</p>
+    </footer>
+
+    <!-- BACK TO TOP BUTTON -->
+    <button class="back-to-top" id="backToTop">↑</button>
+
+    <script>
+        // Mobile Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => {
+            el.style.opacity = 0;
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
+            observer.observe(el);
+        });
+
+        // Back to Top Button
+        const backToTopBtn = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('show');
+            } else {
+                backToTopBtn.classList.remove('show');
+            }
+        });
+
+        backToTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The NFL - A Legendary History</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #0B2260;
+            --red: #A5ACAF;
+            --nfl-red: #D50A0A;
+            --nfl-blue: #013369;
+            --dark: #0a0a0a;
+            --gold: #C6A660;
+            --light-gold: #e8d5a3;
+            --white: #ffffff;
+            --gray: #f0f0f0;
+            --card-bg: #111827;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark);
+            color: var(--white);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== NAVBAR ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.3s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(10, 10, 10, 0.97);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: var(--white);
+        }
+
+        .nav-logo span {
+            color: var(--nfl-red);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--gray);
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--nfl-red);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--white);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--white);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(1, 51, 105, 0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(213, 10, 10, 0.15) 0%, transparent 60%),
+                linear-gradient(180deg, #0a0a0a 0%, #111827 50%, #0a0a0a 100%);
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            border-radius: 50px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 7vw, 5.5rem);
+            line-height: 1.05;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--white) 0%, var(--light-gold) 50%, var(--white) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: #9ca3af;
+            max-width: 650px;
+            margin: 0 auto 40px;
+            font-weight: 300;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            padding: 14px 36px;
+            background: var(--nfl-red);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #ff1a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(213, 10, 10, 0.4);
+        }
+
+        .btn-secondary {
+            padding: 14px 36px;
+            background: transparent;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            font-size: 0.65rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #6b7280;
+        }
+
+        .scroll-indicator .arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid #6b7280;
+            border-bottom: 2px solid #6b7280;
+            transform: rotate(45deg);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            background: linear-gradient(135deg, var(--nfl-blue), var(--navy));
+            padding: 50px 20px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stats-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            color: var(--gold);
+            margin-bottom: 6px;
+        }
+
+        .stat-item p {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #9ca3af;
+        }
+
+        /* ===== SECTION COMMON ===== */
+        section {
+            padding: 100px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header .label {
+            display: inline-block;
+            color: var(--nfl-red);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            margin-bottom: 16px;
+            color: var(--white);
+        }
+
+        .section-header p {
+            color: #9ca3af;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1.05rem;
+        }
+
+        /* ===== HISTORY TIMELINE ===== */
+        .history-section {
+            background: linear-gradient(180deg, #0a0a0a 0%, #111827 100%);
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--nfl-red), var(--gold), var(--nfl-blue));
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 60px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 18px;
+            background: var(--nfl-red);
+            border-radius: 50%;
+            border: 3px solid var(--dark);
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(213, 10, 10, 0.4);
+        }
+
+        .timeline-content {
+            width: 42%;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .timeline-content:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+        }
+
+        .timeline-year {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--nfl-red);
+            margin-bottom: 8px;
+        }
+
+        .timeline-content h3 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--white);
+            letter-spacing: 1px;
+        }
+
+        .timeline-content p {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            line-height: 1.7;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: auto;
+            margin-left: 8%;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: auto;
+            margin-right: 8%;
+        }
+
+        /* ===== LEGENDS ===== */
+        .legends-section {
+            background: linear-gradient(180deg, #111827 0%, #0a0a0a 100%);
+        }
+
+        .legends-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .legend-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.4s, box-shadow 0.4s;
+            position: relative;
+        }
+
+        .legend-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .legend-card-image {
+            height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .legend-card:nth-child(1) .legend-card-image {
+            background: linear-gradient(135deg, #1a3a5c, #0d1f33);
+        }
+        .legend-card:nth-child(2) .legend-card-image {
+            background: linear-gradient(135deg, #4a1a1a, #2d0f0f);
+        }
+        .legend-card:nth-child(3) .legend-card-image {
+            background: linear-gradient(135deg, #1a4a2a, #0d2d1a);
+        }
+        .legend-card:nth-child(4) .legend-card-image {
+            background: linear-gradient(135deg, #3a1a4a, #1f0d2d);
+        }
+        .legend-card:nth-child(5) .legend-card-image {
+            background: linear-gradient(135deg, #4a3a1a, #2d220f);
+        }
+        .legend-card:nth-child(6) .legend-card-image {
+            background: linear-gradient(135deg, #1a2a4a, #0d152d);
+        }
+
+        .legend-number {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 3rem;
+            font-weight: 900;
+            color: rgba(255,255,255,0.1);
+        }
+
+        .legend-info {
+            padding: 24px;
+        }
+
+        .legend-position {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .legend-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+            letter-spacing: 1px;
+        }
+
+        .legend-team {
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-bottom: 14px;
+        }
+
+        .legend-info p {
+            font-size: 0.88rem;
+            color: #9ca3af;
+            line-height: 1.6;
+        }
+
+        .legend-stats-row {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .legend-stat-mini {
+            text-align: center;
+            flex: 1;
+        }
+
+        .legend-stat-mini .val {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--white);
+        }
+
+        .legend-stat-mini .lbl {
+            font-size: 0.65rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== HISTORIC MOMENTS ===== */
+        .moments-section {
+            background: linear-gradient(180deg, #0a0a0a 0%, #111827 100%);
+        }
+
+        .moments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .moment-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 36px;
+            border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .moment-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 50px rgba(0,0,0,0.4);
+        }
+
+        .moment-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .moment-card:nth-child(1)::before { background: var(--nfl-red); }
+        .moment-card:nth-child(2)::before { background: var(--gold); }
+        .moment-card:nth-child(3)::before { background: #22c55e; }
+        .moment-card:nth-child(4)::before { background: #3b82f6; }
+        .moment-card:nth-child(5)::before { background: #ef4444; }
+        .moment-card:nth-child(6)::before { background: #a855f7; }
+
+        .moment-year-tag {
+            display: inline-block;
+            padding: 4px 14px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .moment-card h3 {
+            font-size: 1.15rem;
+            margin-bottom: 12px;
+            color: var(--white);
+            letter-spacing: 1px;
+        }
+
+        .moment-card p {
+            font-size: 0.9rem;
+            color: #9ca3af;
+            line-height: 1.7;
+        }
+
+        .moment-icon {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        /* ===== QUOTE SECTION ===== */
+        .quote-section {
+            padding: 100px 20px;
+            background:
+                radial-gradient(ellipse at center, rgba(1, 51, 105, 0.15) 0%, transparent 70%),
+                var(--dark);
+            text-align: center;
+        }
+
+        .quote-section blockquote {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: clamp(1.3rem, 3vw, 2rem);
+            font-style: italic;
+            color: #d1d5db;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .quote-section blockquote::before {
+            content: '"';
+            font-size: 6rem;
+            color: var(--nfl-red);
+            opacity: 0.3;
+            position: absolute;
+            top: -40px;
+            left: -20px;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .quote-author {
+            margin-top: 24px;
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: #050505;
+            padding: 60px 20px 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-brand h3 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand h3 span {
+            color: var(--nfl-red);
+        }
+
+        .footer-brand p {
+            color: #6b7280;
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        .footer-col h4 {
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            margin-bottom: 16px;
+            color: var(--white);
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 10px;
+        }
+
+        .footer-col a {
+            color: #6b7280;
+            font-size: 0.88rem;
+            transition: color 0.3s;
+        }
+
+        .footer-col a:hover {
+            color: var(--white);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-bottom p {
+            color: #4b5563;
+            font-size: 0.8rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 16px;
+        }
+
+        .social-links a {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            color: #6b7280;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--nfl-red);
+            color: var(--white);
+        }
+
+        /* ===== SCROLL ANIMATIONS ===== */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 48px;
+            height: 48px;
+            background: var(--nfl-red);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(213, 10, 10, 0.4);
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            background: #ff1a1a;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(10, 10, 10, 0.98);
+                flex-direction: column;
+                align-items: center;
+                padding: 40px 0;
+                gap: 24px;
+                transform: translateY(-120%);
+                transition: transform 0.4s ease;
+            }
+
+            .nav-links.open {
+                transform: translateY(0);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .timeline::before {
+                left: 20px;
+            }
+
+            .timeline-dot {
+                left: 20px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(odd) {
+                flex-direction: column;
+                align-items: flex-start;
+                padding-left: 50px;
+            }
+
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                width: 100%;
+                margin: 0;
+            }
+
+            .moments-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .legends-grid {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 70px 16px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+    <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "<%= clarity %>");
+</script>
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">NFL <span>HISTORY</span></a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#history">History</a></li>
+                <li><a href="#legends">Legends</a></QB></a></li>
+                <li><a href="#moments">Moments</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="hero-badge">Est. 1920</div>
+            <h1>The Greatest Game in Sports</h1>
+            <p>From its humble beginnings in Canton, Ohio to becoming America's most-watched sporting league — explore the rich tapestry of NFL history, legendary players, and unforgettable moments.</p>
+            <div class="hero-buttons">
+                <a href="#history" class="btn-primary">Explore History</a>
+                <a href="#legends" class="btn-secondary">Meet the Legends</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="arrow"></div>
+        </div>
+    </section>
+
+    <!-- STATS BAR -->
+    <div class="stats-bar">
+        <div class="stats-grid">
+            <div class="stat-item fade-up">
+                <h3>100+</h3>
+                <p>Years of History</p>
+            </div>
+            <div class="stat-item fade-up">
+                <h3>32</h3>
+                <p>Teams Competing</p>
+            </div>
+            <div class="stat-item fade-up">
+                <h3>275M+</h3>
+                <p>Fans Worldwide</p>
+            </div>
+            <div class="stat-item fade-up">
+                <h3>59</h3>
+                <p>Super Bowls Played</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY TIMELINE -->
+    <section class="history-section" id="history">
+        <div class="container">
+            <div class="section-header fade-up">
+                <span class="label">Through the Years</span>
+                <h2>A Century of Football</h2>
+                <p>The journey from a small group of teams to the global sports phenomenon we know today.</p>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1920</div>
+                        <h3>The Founding</h3>
+                        <p>The American Professional Football Association (APFA) is founded in Canton, Ohio, with 14 teams. It would later become the National Football League in 1922.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1934</div>
+                        <h3>Overtime is Born</h3>
+                        <p>The first ever overtime game takes place between the Philadelphia Eagles and New York Giants, setting a precedent that would define countless thrilling finishes.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1958</div>
+                        <h3>The Greatest Game Ever Played</h3>
+                        <p>The Baltimore Colts and New York Giants play an instant classic in the NFL Championship game. The overtime victory on national television saves the league and transforms it forever.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1966</div>
+                        <h3>The Merger & Super Bowl</h3>
+                        <p>The AFL and NFL announce a merger. The first Super Bowl is played in January 1967, pitting the Green Bay Packers against the Kansas City Chiefs.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1970</div>
+                        <h3>Full Merger Takes Effect</h3>
+                        <p>The AFL–NFL merger becomes official. The AFC and NFC are created, each with three divisions, establishing the structure still used today.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">1988</div>
+                        <h3>Muhammad Ali Throws the First Pitch</h3>
+                        <p>The league embraces pop culture iconography, and the NFL begins its transformation into a global entertainment spectacle with unprecedented media coverage.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item fade-up">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-year">2000s–Today</div>
+                        <h3>Digital Age & Global Expansion</h3>
+                        <p>The NFL expands internationally with games in London, Mexico, Germany, and Brazil. Digital streaming, social media, and analytics revolutionize how fans experience the game.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- LEGENDS -->
+    <section class="legends-section" id="legends">
+        <div class="container">
+            <div class="section-header fade-up">
+                <span class="label">Hall of Fame</span>
+                <h2>Legends of the Game</h2>
+                <p>The players who transcended the sport and left an indelible mark on football history.</p>
+            </div>
+
+            <div class="legends-grid">
+                <div class="legend-card fade-up">
+                    <div class="legend-card-image">
+                        🏈
+                        <span class="legend-number">#12</span>
+                    </div>
+                    <div class="legend-info">
+                        <div class="legend-position">Quarterback</div>
+                        <h3>Joe Montana</h3>
+                        <div class="legend-team">San Francisco 49ers · 1979–1992</div>
+                        <p>"Joe Cool" delivered some of the greatest performances in postseason history, leading four Super Bowl victories with an almost supernatural composure under pressure.</p>
+                        <div class="legend-stats-row">
+                            <div class="legend-stat-mini">
+                                <div class="val">4</div>
+                                <div class="lbl">SB Rings</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">40,551</div>
+                                <div class="lbl">Yards</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">273</div>
+                                <div class="lbl">TD Passes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card fade-up">
+                    <div class="legend-card-image">
+                        🏈
+                        <span class="legend-number">#28</span>
+                    </div>
+                    <div class="legend-info">
+                        <div class="legend-position">Running Back</div>
+                        <h3>Emmitt Smith</h3>
+                        <div class="legend-team">Dallas Cowboys · 1990–2002</div>
+                        <p>The all-time leading rusher in NFL history, Emmith Smith combined explosive speed with extraordinary durability across 13 dominant seasons.</p>
+                        <div class="legend-stats-row">
+                            <div class="legend-stat-mini">
+                                <div class="val">3</div>
+                                <div class="lbl">SB Rings</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">18,355</div>
+                                <div class="lbl">Rush Yds</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">164</div>
+                                <div class="lbl">TDs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card fade-up">
+                    <div class="legend-card-image">
+                        🏈
+                        <span class="legend-number">#22</span>
+                    </div>
+                    <div class="legend-info">
+                        <div class="legend-position">Defensive End</div>
+                        <h3>Reggie White</h3>
+                        <div class="legend-team">Philadelphia Eagles / Green Bay · 1984–2000</div>
+                        <p>"The Reverend" was arguably the most dominant defensive player of his era, combining elite pass-rushing ability with extraordinary consistency.</p>
+                        <div class="legend-stats-row">
+                            <div class="legend-stat-mini">
+                                <div class="val">1</div>
+                                <div class="lbl">SB Ring</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">198</div>
+                                <div class="lbl">Sacks</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">13</div>
+                                <div class="lbl">Pro Bowls</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card fade-up">
+                    <div class="legend-card-image">
+                        🏈
+                        <span class="legend-number">#88</span>
+                    </div>
+                    <div class="legend-info">
+                        <div class="legend-position">Wide Receiver</div>
+                        <h3>Lynn Swann</h3>
+                        <div class="legend-team">Pittsburgh Steelers · 1974–1982</div>
+                        <p>A graceful and clutch receiver during the Steelers' dynasty, Swann made one of the most iconic catches in Super Bowl history against the Cowboys.</p>
+                        <div class="legend-stats-row">
+                            <div class="legend-stat-mini">
+                                <div class="val">4</div>
+                                <div class="lbl">SB Rings</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">4,173</div>
+                                <div class="lbl">Rec Yds</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">39</div>
+                                <div class="lbl">Receptions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card fade-up">
+                    <div class="legend-card-image">
+                        🏈
+                        <span class="legend-number">#4</span>
+                    </div>
+                    <div class="legend-info">
+                        <div class="legend-position">Quarterback</div>
+                        <h3>Tom Brady</h3>
+                        <div class="legend-team">New England Patriots / Tampa Bay · 2000–2023</div>
+                        <p>Widely regarded as the greatest quarterback of all time, Brady's unparalleled longevity, precision, and clutch performance redefined what's possible in football.</p>
+                        <div class="legend-stats-row">
+                            <div class="legend-stat-mini">
+                                <div class="val">7</div>
+                                <div class="lbl">SB Rings</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">89,214</div>
+                                <div class="lbl">Yards</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">649</div>
+                                <div class="lbl">TD Passes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="legend-card fade-up">
+                    <div class="legend-card-image">
+                        🏈
+                        <span class="legend-number">#7</span>
+                    </div>
+                    <div class="legend-info">
+                        <div class="legend-position">Quarterback</div>
+                        <h3>John Elway</h3>
+                        <div class="legend-team">Denver Broncos · 1983–1998</div>
+                        <p>"Ice in His Veins" Elway transformed the Broncos into a powerhouse, delivering the franchise's first two Super Bowl titles in dramatic fashion.</p>
+                        <div class="legend-stats-row">
+                            <div class="legend-stat-mini">
+                                <div class="val">2</div>
+                                <div class="lbl">SB Rings</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">51,475</div>
+                                <div class="lbl">Yards</div>
+                            </div>
+                            <div class="legend-stat-mini">
+                                <div class="val">216</div>
+                                <div class="lbl">TD Passes</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HISTORIC MOMENTS -->
+    <section class="moments-section" id="moments">
+        <div class="container">
+            <div class="section-header fade-up">
+                <span class="label">Unforgettable</span>
+                <h2>Moments That Defined the NFL</h2>
+                <p>These are the plays and events etched permanently into football lore.</p>
+            </div>
+
+            <div class="moments-grid">
+                <div class="moment-card fade-up">
+                    <div class="moment-icon">🏟️</div>
+                    <span class="moment-year-tag">December 28, 1958</span>
+                    <h3>The 1958 NFL Championship – "The Greatest Game Ever Played"</h3>
+                    <p>Baltimore Colts vs. New York Giants in overtime before 48,000 fans. Johnny Unitas and Lenny Moore led the comeback that saved professional football and captivated a nation watching on live TV for the first time.</p>
+                </div>
+
+                <div class="moment-card fade-up">
+                    <div class="moment-icon">👟</div>
+                    <span class="moment-year-tag">January 12, 1981</span>
+                    <h3>The Immaculate Reception</h3>
+                    <p>Franco Harris of the Pittsburgh Steelers makes an impossible catch off the chest of Jack Tatum in the final second of a divisional playoff game, sparking one of the most controversial and celebrated plays in NFL history.</p>
+                </div>
+
+                <div class="moment-card fade-up">
+                    <div class="moment-icon">🤝</div>
+                    <span class="moment-year-tag">January 23, 1983</span>
+                    <h3"The Catch" – Dwight Clark & Joe Montana</h3>
+                    <p>In the NFC Championship game, Joe Montana leaps and tosses a bullet pass to Dwight Clark, whose fingertip grab set up the winning touchdown for the 49ers in one of the most iconic images in sports history.</p>
+                </div>
+
+                <div class="moment-card fade-up">
+                    <div class="moment-icon">😮</div>
+                    <span class="moment-year-tag">February 3, 2002</span>
+                    <h3>The Tuck Rule Game</h3>
+                    <p>The New England Patriots survive a potential Detroit upset when the "tuck rule" reversal on Tom Brady's fumble keeps a drive alive. The controversial call would fuel the rivalry for a decade.</p>
+                </div>
+
+                <div class="moment-card fade-up">
+                    <div class="moment-icon">🎯</div>
+                    <span class="moment-year-tag">February 5, 2017</span>
+                    <h3>Super Bowl LI – The Largest Comeback in SB History</h3>
+                    <p>The Patriots overcome a 28–3 deficit to defeat the Atlanta Falcons 34–28 in overtime. Tom Brady throws three touchdown passes in the fourth quarter alone, cementing his legacy as the greatest clutch performer ever.</p>
+                </div>
+
+                <div class="moment-card fade-up">
+                    <div class="moment-icon">⚡</div>
+                    <span class="moment-year-tag">February 2, 2025</span>
+                    <h3>KC Chiefs Repeat – Patrick Mahomes II's Dynasty</h3>
+                    <p>Patrick Mahomes leads another spectacular Super Bowl run, proving his back-to-back championships weren't a fluke. His no-look passes, improvisational genius, and ice-cold demeanor redefine modern quarterback play.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE -->
+    <section class="quote-section">
+        <blockquote class="fade-up">
+            Football is a great game because it reflects the struggles and triumphs of life itself. You get knocked down, and you have to get back up stronger than before.
+        </blockquote>
+        <div class="quote-author fade-up">— Vince Lombardi</div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>NFL <span>History</span></h3>
+                <p>A tribute to the rich history, legendary figures, and unforgettable moments that make the NFL the greatest sports league in the world.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#history">History</a></li>
+                    <li><a href="#legends">Legends</a></li>
+                    <li><a href="#moments">Moments</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Erays</h4>
+                <ul>
+                    <li><a href="#">Regular Season</a></li>
+                    <li><a href="#">Playoffs</a></li>
+                    <li><a href="#">Super Bowl</a></li>
+                    <li><a href="#">Draft History</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Learn More</h4>
+                <ul>
+                    <li><a href="#">Hall of Fame</a></li>
+                    <li><a href="#">Rule Evolution</a></li>
+                    <li><a href="#">Team Histories</a></li>
+                    <li><a href="#">Records & Stats</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 NFL History Tribute. Fan-made project — not officially affiliated with the NFL.</p>
+            <div class="social-links">
+                <a href="#" aria-label="Twitter">𝕏</a>
+                <a href="#" aria-label="Facebook">f</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="YouTube">▶</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BACK TO TOP -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">↑</button>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('open');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('open');
+            });
+        });
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll animations (Intersection Observer)
+        const fadeElements = document.querySelectorAll('.fade-up');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        fadeElements.forEach(el => observer.observe(el));
+
+        // Back to Top Button
+        const backToTop = document.getElementById('backToTop');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Smooth reveal for timeline items with staggered delays
+        const timelineItems = document.querySelectorAll('.timeline-item');
+        const timelineObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    timelineObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.2 });
+
+        timelineItems.forEach(item => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(30px)';
+            item.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            timelineObserver.observe(item);
+        });
+    </script>
+</body>
+</html>
