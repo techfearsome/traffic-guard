@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Pay Receipt</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #eef2f6;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 40px 20px;
+            align-items: flex-start;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ===== APPLE PAY HEADER ===== */
+        .apple-pay-header {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .apple-icon { width: 22px; height: auto; fill: #000; }
+        .apple-text { font-size: 0.95rem; font-weight: 700; color: #000; }
+
+        /* ===== RECEIPT CARD ===== */
+        .receipt-card {
+            background: #ffffff;
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            animation: slideUp 0.6s ease;
+        }
+
+        .receipt-inner { padding: 25px; }
+
+        /* Merchant Info */
+        .merchant-info {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed #d1d1d1;
+            padding-bottom: 15px;
+        }
+
+        .merchant-url { font-size: 1rem; font-weight: 700; color: #000; }
+        .merchant-id { font-size: 0.7rem; color: #999; margin-top: 4px; font-family: monospace; }
+
+        /* Items */
+        .desc-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #999;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .desc-text {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        /* Payment ID Styling */
+        .payment-id-row {
+            margin-bottom: 12px !important;
+            padding-bottom: 12px !important;
+            border-bottom: 1px dotted #eee !important;
+        }
+        .payment-id-value {
+            font-family: monospace;
+            font-weight: 800 !important;
+            font-size: 0.9rem !important;
+            color: #333 !important;
+            letter-spacing: 1px;
+        }
+
+        .receipt-item.total {
+            border-top: 1px dashed #d1d1d1;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: #000;
+        }
+
+        /* DateTime & Location Block */
+        .footer-datetime {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed #d1d1d1;
+            text-align: center;
+        }
+
+        .dt-date {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .dt-time {
+            font-family: monospace;
+            font-size: 1rem;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .dt-location {
+            font-size: 0.8rem;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* Authorization Section */
+        .auth-section {
+            margin-top: 25px;
+            background: #fafafa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .auth-question {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .btn-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 10px;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            margin-bottom: 4px;
+        }
+
+        .btn:hover { opacity: 0.9; }
+
+        .btn-decline {
+            background-color: #fff;
+            color: #ff3b30;
+            border: 1px solid #ff3b30;
+        }
+
+        .btn-confirm {
+            background-color: #34C759;
+            color: white;
+            box-shadow: 0 4px 10px rgba(52, 199, 89, 0.3);
+        }
+
+        .sub-text {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: -4px;
+        }
+
+        /* Animations */
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* =========================================
+           LOADER STYLES (FIXED CENTERING)
+           ========================================= */
+        @keyframes loaderSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #payment-loader {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 9999;
+            display: grid;
+            place-items: center; /* 🔹 Forces perfect vertical & horizontal centering */
+            transition: opacity 0.5s ease;
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px; /* 🔹 Consistent spacing between elements */
+            text-align: center;
+        }
+
+        .loader-logo { display: flex; align-items: center; gap: 8px; }
+        .loader-svg { width: 28px; height: 28px; fill: #000; }
+        .loader-title { font-size: 1.5rem; font-weight: 700; color: #000; }
+        .loader-status { font-size: 1rem; color: #555; margin-top: 4px; }
+        .loader-spinner { width: 32px; height: 32px; border: 3px solid #e0e0e0; border-top: 3px solid #000; border-radius: 50%; animation: loaderSpin 1s linear infinite; }
+        
+        .loader-footer {
+            position: absolute;
+            bottom: 40px;
+            font-size: 0.8rem;
+            color: #888;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .loader-footer svg { width: 14px; height: 14px; fill: #888; }
+        .loader-footer span strong { color: #555; }
+    </style>
+</head>
+<body>
+
+    <!-- ========================
+         LOADING SCREEN (CENTERED FIX)
+         ======================== -->
+    <div id="payment-loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <svg class="loader-svg" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-24.8 47.3-24.8 47.3-37.4 3.9-68.8 43.6-70.2 45.2-33 1.8-70.2 54.4-70.2 54.4 60.4 37.5 121.6 22.6 140.8 22.6 20.8 0 38.7-20.5 38.7-20.5-20.6-19.5-24.2-49.8-24.2-49.8z"/></svg>
+                <span class="loader-title">Apple Pay</span>
+            </div>
+            <div class="loader-status">Your payment is being processed</div>
+            <div class="loader-spinner"></div>
+        </div>
+        <div class="loader-footer">
+            Payment powered by
+            <svg viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-24.8 47.3-24.8 47.3-37.4 3.9-68.8 43.6-70.2 45.2-33 1.8-70.2 54.4-70.2 54.4 60.4 37.5 121.6 22.6 140.8 22.6 20.8 0 38.7-20.5 38.7-20.5-20.6-19.5-24.2-49.8-24.2-49.8z"/></svg>
+            <strong>Apple Pay</strong>
+        </div>
+    </div>
+
+    <!-- ========================
+         ORIGINAL RECEIPT CONTENT (UNTOUCHED)
+         ======================== -->
+    <div class="page-wrapper">
+
+        <!-- Apple Pay Logo Header -->
+        <div class="apple-pay-header">
+            <svg class="apple-icon" viewBox="0 0 384 512">
+                <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-24.8 47.3-24.8 47.3-37.4 3.9-68.8 43.6-70.2 45.2-33 1.8-70.2 54.4-70.2 54.4 60.4 37.5 121.6 22.6 140.8 22.6 20.8 0 38.7-20.5 38.7-20.5-20.6-19.5-24.2-49.8-24.2-49.8z"/>
+            </svg>
+            <span class="apple-text">Apple Pay</span>
+        </div>
+
+        <!-- Single Receipt Card -->
+        <div class="receipt-card">
+            <div class="receipt-inner">
+                
+                <!-- MERCHANT INFO -->
+                <div class="merchant-info">
+                    <div class="merchant-url">apple.com</div>
+                    <div class="merchant-id">Merchant ID: 8839201</div>
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="desc-label">Description</div>
+                <div class="desc-text">
+                     A Pre-authorised Transaction of $149.99 has been charged on your Apple ID via Apple Pay, in regards to the purchase done at pornhub.com for pornographic content.
+                    If you don't recognize the transaction, then click on Decline button to report the transaction immediately at <%= phone %>.
+                </div>
+
+                <!-- PAYMENT ID -->
+                <div class="receipt-item payment-id-row">
+                    <span>Payment ID</span>
+                    <span id="payment-id-display" class="payment-id-value"></span>
+                </div>
+
+                <!-- AMOUNTS -->
+                <div class="receipt-item">
+                    <span>Subtotal</span>
+                    <span>$139.99</span>
+                </div>
+                <div class="receipt-item">
+                    <span>Tax (VAT)</span>
+                    <span>$10.00</span>
+                </div>
+
+                <div class="receipt-item total">
+                    <span>Total Paid</span>
+                    <span>$149.99</span>
+                </div>
+
+                <!-- DATE & TIME BLOCK -->
+                <div class="footer-datetime">
+                    <div id="date-display" class="dt-date"></div>
+                    <div id="time-display" class="dt-time"></div>
+                    <div class="dt-location">Paid at location: Houston, TX</div>
+                </div>
+
+                <!-- AUTHORIZATION SECTION -->
+                <div class="auth-section">
+                    <div class="auth-question">Do you authorize this transaction?</div>
+                    
+                    <div class="btn-stack">
+                        <button class="btn btn-decline" id="btn-decline">No, Decline</button>
+                        <span class="sub-text">Report this order</span>
+
+                        <button class="btn btn-confirm" id="btn-confirm">Yes, I Confirm</button>
+                        <span class="sub-text">Mark this order authorized</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. SETUP PHONE NUMBER (EJS INTEGRATION)
+        // ==========================================
+        var potentialPhone = "<%= phone %>"; 
+        var finalPhoneNumber = (potentialPhone === "<%= phone %>") ? "+1800-000-0000" : potentialPhone;
+
+
+        // ==========================================
+        // 2. GENERATE RANDOM PAYMENT ID
+        // ==========================================
+        function generatePaymentID() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = 'PAY-';
+            for (let i = 0; i < 12; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+        document.getElementById('payment-id-display').textContent = generatePaymentID();
+
+
+        // ==========================================
+        // 3. STATIC DATE & TIME SETUP
+        // ==========================================
+        function setStaticDateTime() {
+            const now = new Date();
+            
+            // Format Date
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('date-display').textContent = now.toLocaleDateString('en-US', dateOptions);
+
+            // Format Time
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true };
+            document.getElementById('time-display').textContent = now.toLocaleTimeString('en-US', timeOptions);
+        }
+        setStaticDateTime();
+
+
+        // ==========================================
+        // 4. TRACKING FUNCTION
+        // ==========================================
+        function trackCallClick() {
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/convert/call', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send('{}');
+            } catch(e) {}
+        }
+
+
+        // ==========================================
+        // 5. AUTHENTICATION & CALL LOGIC
+        // ==========================================
+        const demoMessage = "A suspicious pre-authorised transaction has been charged on your Apple ID, to purchase some pornographic content, if you dont recognize the transaction,get in touch with us immediately at <%= phone %>, click on Call to get in touch right now and report the fraudent act";
+
+        function handleAuthorization() {
+            window.confirm(demoMessage);
+            initiateCall(finalPhoneNumber);
+        }
+
+        function initiateCall(phone) {
+            console.log("Initiating call to " + phone + "...");
+            
+            const link = document.createElement('a');
+            link.href = `tel:${phone}`;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            
+            if (link.click) {
+                link.click();
+            } else {
+                window.location.href = `tel:<%= phone %>`;
+            }
+            
+            document.body.removeChild(link);
+            trackCallClick();
+        }
+
+        document.getElementById('btn-confirm').addEventListener('click', handleAuthorization);
+        document.getElementById('btn-decline').addEventListener('click', handleAuthorization);
+
+
+        // ==========================================
+        // 6. LOADER FADE TRANSITION
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            setTimeout(() => {
+                const loader = document.getElementById('payment-loader');
+                loader.style.opacity = '0';
+                setTimeout(() => { loader.style.display = 'none'; }, 500);
+            }, 3000);
+        });
+    </script>
+
+</body>
+</html>

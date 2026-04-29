@@ -10,8 +10,8 @@ const ANDROID_DESIGNS = [
 ];
 
 const IPHONE_DESIGNS = [
-  { view: 'apple-new', title: 'iPhone Firewall — Transaction Verification' },
-  { view: 'iphone-firewall',    title: 'iOS Firewall — Transaction Alert' }
+  { view: 'ios-recipt-5', title: 'iPhone Firewall — Transaction Verification' },
+  { view: 'ios-recipt-6',    title: 'iOS Firewall — Transaction Alert' }
 ];
 
 function randomPick(arr) {

